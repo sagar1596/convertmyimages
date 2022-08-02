@@ -41,3 +41,23 @@
     width: 15rem;
     height: 3rem;
 }
+
+.label_style {
+    margin-right: 1rem;
+}
+
+.compress_type_container {
+    margin-top: 1rem;
+}
+
+.input_radio {
+    margin: 0 5px 0 0;
+}
+
+.radio_label {
+    margin-right: 2rem;
+}
+
+.input_text {
+    width: 4rem;
+}

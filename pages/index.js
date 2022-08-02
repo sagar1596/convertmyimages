@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { compressAccurately } from 'image-conversion';
+import { compressAccurately, compress } from 'image-conversion';
 import styles from '../styles/Convert.module.css';
 import HeaderComponent from '../components/header';
 import FooterComponent from '../components/footer';
@@ -12,7 +12,9 @@ const ToPng = () => {
     new_type = useRef(),
     required_size = useRef(),
     downloadSection = useRef(),
-    [convertedFile, setConvertedFile] = useState({});
+    quality = useRef(),
+    [convertedFile, setConvertedFile] = useState({}),
+    [compressType, setCompressType] = useState("size");
 
     
 
@@ -21,8 +23,8 @@ const ToPng = () => {
         const reqSize = required_size.current.value;
         const file = document.getElementById('imageupload').files[0];
 
-        if(!reqSize || !file) {
-            alert("File or required size not provided");
+        if(!file) {
+            alert("File not provided");
             return;
         }
 
@@ -31,18 +33,34 @@ const ToPng = () => {
 
     const convertFile = (reqSize) => {
         const file = document.getElementById('imageupload').files[0];
-        compressAccurately(file,parseInt(reqSize)).then(res=>{
+        if(reqSize) {
+            compressAccurately(file,parseInt(reqSize)).then(res=>{
 
-            setConvertedFile(res);
+                setConvertedFile(res);
 
-            old_size.current.innerText = `Size: ${bytesToKbs(file.size)}`;
-            old_type.current.innerText = `Type: ${file.type}`;
+                old_size.current.innerText = `Size: ${bytesToKbs(file.size)}`;
+                old_type.current.innerText = `Type: ${file.type}`;
 
-            new_size.current.innerText = `Size: ${bytesToKbs(res.size)}`;
-            new_type.current.innerText = `Type: ${res.type}`;
+                new_size.current.innerText = `Size: ${bytesToKbs(res.size)}`;
+                new_type.current.innerText = `Type: ${res.type}`;
 
-            downloadSection.current.classList.remove('hidden');
-        })
+                downloadSection.current.classList.remove('hidden');
+            })
+        } else {
+            const qualityValue = quality.current.value || 1;
+            compress(file,qualityValue).then(res=>{
+
+                setConvertedFile(res);
+
+                old_size.current.innerText = `Size: ${bytesToKbs(file.size)}`;
+                old_type.current.innerText = `Type: ${file.type}`;
+
+                new_size.current.innerText = `Size: ${bytesToKbs(res.size)}`;
+                new_type.current.innerText = `Type: ${res.type}`;
+
+                downloadSection.current.classList.remove('hidden');
+            })
+        }
     }
 
     const _handleDownload = () => {
@@ -73,23 +91,44 @@ const ToPng = () => {
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
      }
 
+     const _handleRadioChange = (val) => {
+         if(val.currentTarget.value) {
+            setCompressType(val.currentTarget.value);
+         }
+     }
+
 
     return (
 
         <div className={styles.container}>
 
             <span className={ styles.instruction }>
-                Upload the image that you wish to convert and size that you want it to be converted to.
-                Currently, images are only being converted to png. We are soon introducing other formats.
+                Upload the image that you wish to compress and size/quality that you want it to be compressed to.
             </span>
 
-            <label htmlFor="imageupload">Choose File:</label>
+            <label className={styles.label_style} htmlFor="imageupload">Choose File:</label>
             <input id="imageupload" type="file"></input>
 
-            <label htmlFor="size_needed">Size needed:</label>
-            <input id="size_needed" type="text" ref={ required_size }></input>
+            <div className = {styles.compress_type_container}>
+                <input type="radio" className={styles.input_radio} title="Compress to Size" checked={compressType === 'size'} placeholder="Compress to Size" name="compress_type" value="size" onChange={_handleRadioChange} />
+                <span className={styles.radio_label}>Size</span>
+                <input type="radio" className={styles.input_radio} title="Compress to Quality" placeholder="Compress to Quality" name="compress_type" value="quality" onChange={_handleRadioChange} />
+                <span className={styles.radio_label}>Quality</span>
 
-            <button className={styles.convert_btn} onClick={_handleConvert}>Convert</button>
+                {
+                    compressType === 'size' ? 
+                            ( 
+                            <>
+                            <input id="size_needed" className={styles.input_text} type="text" defaultValue="200" ref={ required_size }></input></> )
+                        : 
+                            (<>
+                            <input id="quality" className={styles.input_text} type="number" min="0" max='1' step='0.1' defaultValue='1.0' ref={ quality }></input></>)
+                }
+            </div>
+
+            
+
+            <button className={styles.convert_btn} onClick={_handleConvert}>Compress</button>
 
             <div className={styles.downloadFile + ' hidden'} ref= { downloadSection }>
                 <div className={styles.old}>
