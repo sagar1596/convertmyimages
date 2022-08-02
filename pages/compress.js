@@ -5,7 +5,7 @@ import HeaderComponent from '../components/header';
 import FooterComponent from '../components/footer';
 import SeoComponent from '../components/seo';
 
-const Home = () => {
+const Compress = () => {
     const old_size = useRef(),
     old_type = useRef(),
     new_size = useRef(),
@@ -20,7 +20,6 @@ const Home = () => {
 
     const _handleConvert = () => {
         
-        const reqSize = required_size.current.value;
         const file = document.getElementById('imageupload').files[0];
 
         if(!file) {
@@ -28,13 +27,25 @@ const Home = () => {
             return;
         }
 
-        convertFile(reqSize);
+        switch(compressType) {
+            case "size":
+                const reqSize = required_size.current.value;
+                convertFile(1, reqSize);
+                break;
+            case "quality":
+                const reqQuality = quality.current.value;
+                convertFile(2, reqQuality);
+                break;
+        }
+        
     }
 
-    const convertFile = (reqSize) => {
+    const convertFile = (type, reqSize) => {
         const file = document.getElementById('imageupload').files[0];
-        if(reqSize) {
-            compressAccurately(file,parseInt(reqSize)).then(res=>{
+        if(type === 1) {
+            compressAccurately(file,{
+                size: parseInt(reqSize)
+            }).then(res=>{
 
                 setConvertedFile(res);
 
@@ -47,8 +58,10 @@ const Home = () => {
                 downloadSection.current.classList.remove('hidden');
             })
         } else {
-            const qualityValue = quality.current.value || 1;
-            compress(file,qualityValue).then(res=>{
+            const qualityValue = reqSize || 1;
+            compress(file,{
+                quality: qualityValue
+            }).then(res=>{
 
                 setConvertedFile(res);
 
@@ -148,7 +161,7 @@ const Home = () => {
     )
 }
 
-Home.getLayout = (page) => {
+Compress.getLayout = (page) => {
   return (
       <>
         <SeoComponent />
@@ -159,4 +172,4 @@ Home.getLayout = (page) => {
   );
 }
 
-export default Home;
+export default Compress;

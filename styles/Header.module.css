@@ -11,4 +11,23 @@
     height: 3rem;
     width: 10rem;
     position: relative;
+    margin-right: 2rem;
+}
+.links {
+    display: flex;
+}
+.links a{
+    padding: 0 1rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+}
+.links a:hover{
+    background-color: #0e1218;
+}
+.active {
+    background-color: #0e1218;
+}
+.basic {
+    
 }

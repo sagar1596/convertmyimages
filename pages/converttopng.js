@@ -5,7 +5,7 @@ import HeaderComponent from '../components/header';
 import FooterComponent from '../components/footer';
 import SeoComponent from '../components/seo';
 
-const Home = () => {
+const ToPNG = () => {
     const old_size = useRef(),
     old_type = useRef(),
     new_size = useRef(),
@@ -20,7 +20,6 @@ const Home = () => {
 
     const _handleConvert = () => {
         
-        const reqSize = required_size.current.value;
         const file = document.getElementById('imageupload').files[0];
 
         if(!file) {
@@ -28,13 +27,26 @@ const Home = () => {
             return;
         }
 
-        convertFile(reqSize);
+        switch(compressType) {
+            case "size":
+                const reqSize = required_size.current.value;
+                convertFile(1, reqSize);
+                break;
+            case "quality":
+                const reqQuality = quality.current.value;
+                convertFile(2, reqQuality);
+                break;
+        }
+        
     }
 
-    const convertFile = (reqSize) => {
+    const convertFile = (type, reqSize) => {
         const file = document.getElementById('imageupload').files[0];
-        if(reqSize) {
-            compressAccurately(file,parseInt(reqSize)).then(res=>{
+        if(type === 1) {
+            compressAccurately(file,{
+                size: parseInt(reqSize),
+                type: "image/png"
+            }).then(res=>{
 
                 setConvertedFile(res);
 
@@ -47,8 +59,11 @@ const Home = () => {
                 downloadSection.current.classList.remove('hidden');
             })
         } else {
-            const qualityValue = quality.current.value || 1;
-            compress(file,qualityValue).then(res=>{
+            const qualityValue = reqSize || 1;
+            compress(file,{
+                quality: qualityValue,
+                type: "image/png"
+            }).then(res=>{
 
                 setConvertedFile(res);
 
@@ -92,9 +107,7 @@ const Home = () => {
      }
 
      const _handleRadioChange = (val) => {
-         if(val.currentTarget.value) {
-            setCompressType(val.currentTarget.value);
-         }
+        setCompressType(val.currentTarget.value);
      }
 
 
@@ -103,7 +116,7 @@ const Home = () => {
         <div className={styles.container}>
 
             <span className={ styles.instruction }>
-                Upload the image that you wish to compress and size/quality that you want it to be compressed to.
+                Upload the image that you wish to convert to PNG format.
             </span>
 
             <label className={styles.label_style} htmlFor="imageupload">Choose File:</label>
@@ -128,7 +141,7 @@ const Home = () => {
 
             
 
-            <button className={styles.convert_btn} onClick={_handleConvert}>Compress</button>
+            <button className={styles.convert_btn} onClick={_handleConvert}>Convert To PNG</button>
 
             <div className={styles.downloadFile + ' hidden'} ref= { downloadSection }>
                 <div className={styles.old}>
@@ -148,7 +161,7 @@ const Home = () => {
     )
 }
 
-Home.getLayout = (page) => {
+ToPNG.getLayout = (page) => {
   return (
       <>
         <SeoComponent />
@@ -159,4 +172,4 @@ Home.getLayout = (page) => {
   );
 }
 
-export default Home;
+export default ToPNG;
