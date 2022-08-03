@@ -1,0 +1,21 @@
+<!-- public/sitemap.xml -->
+   <xml version="1.0" encoding="UTF-8">
+   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+     <url>
+       <loc>http://www.comvertmyimages.com</loc>
+       <lastmod>2022-08-03</lastmod>
+     </url>
+     <url>
+       <loc>http://www.comvertmyimages.com/compress</loc>
+       <lastmod>2022-08-03</lastmod>
+     </url>
+     <url>
+       <loc>http://www.comvertmyimages.com/converttojpg</loc>
+       <lastmod>2022-08-03</lastmod>
+     </url>
+     <url>
+       <loc>http://www.comvertmyimages.com/converttopng</loc>
+       <lastmod>2022-08-03</lastmod>
+     </url>
+   </urlset>
+   </xml>
