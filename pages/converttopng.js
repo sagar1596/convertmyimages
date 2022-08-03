@@ -164,7 +164,17 @@ const ToPNG = () => {
 ToPNG.getLayout = (page) => {
   return (
       <>
-        <SeoComponent />
+        <SeoComponent 
+        title="Convert My Images : To PNG"
+        description="This is a site used to convert images to PNG format to a required size"
+        canonical="http://www.convertmyimages.com/converttopng"
+        ourl= 'http://www.convertmyimages.com'
+        otitle= 'Convert my images'
+        odescription= 'This is a site used to convert images to PNG format to a required size'
+        osite_name= 'ConvertMyImages'
+        thandle= '@sagar1596'
+        tsite= 'www.sagarbhat.com'
+        />
         <HeaderComponent />
         {page}
         <FooterComponent />

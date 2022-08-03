@@ -164,7 +164,17 @@ const ToJPEG = () => {
 ToJPEG.getLayout = (page) => {
   return (
       <>
-        <SeoComponent />
+        <SeoComponent 
+            title="Convert My Images : To JPEG"
+            description="This is a site used to convert images to JPEG format to a required size"
+            canonical="http://www.convertmyimages.com/converttojpg"
+            ourl= 'http://www.convertmyimages.com'
+            otitle= 'Convert my images'
+            odescription= 'This is a site used to convert images to JPEG format to a required size'
+            osite_name= 'ConvertMyImages'
+            thandle= '@sagar1596'
+            tsite= 'www.sagarbhat.com'
+             />
         <HeaderComponent />
         {page}
         <FooterComponent />

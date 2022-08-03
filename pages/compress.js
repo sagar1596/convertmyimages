@@ -164,7 +164,17 @@ const Compress = () => {
 Compress.getLayout = (page) => {
   return (
       <>
-        <SeoComponent />
+        <SeoComponent
+            title="Convert My Images : Compress"
+            description="This is a site used to compress images to required size."
+            canonical="http://www.convertmyimages.com/compress"
+            ourl= 'http://www.convertmyimages.com'
+            otitle= 'Convert my images'
+            odescription= 'This is a site used to compress images to required size.'
+            osite_name= 'ConvertMyImages'
+            thandle= '@sagar1596'
+            tsite= 'www.sagarbhat.com'
+             />
         <HeaderComponent />
         {page}
         <FooterComponent />
