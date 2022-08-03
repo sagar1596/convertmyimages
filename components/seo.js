@@ -12,6 +12,8 @@ const SeoComponent = ({title, description, canonical, ourl, otitle, odescription
           title: otitle,
           description: odescription,
           site_name: osite_name,
+          noindex: false,
+          nofollow: false,
           images: [
             {
               url: 'https://www.convertmyimages.com/logo.png',
@@ -20,6 +22,7 @@ const SeoComponent = ({title, description, canonical, ourl, otitle, odescription
               alt: 'Logo',
               type: 'image/png',
             }]
+
         }}
         twitter={{
           handle: thandle,
