@@ -9,6 +9,7 @@ function MyApp({ Component, pageProps }) {
   <script 
    async strategy="afterInteractive"
    onError={ (e) => { console.error('Script failed to load', e) }}
+   data-checked-head="true"
    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7914014072217717"
      ></script>
   <Component {...pageProps} />
@@ -16,4 +17,4 @@ function MyApp({ Component, pageProps }) {
   )
 }
 
-export default MyApp
+export default MyApp;
