@@ -4,7 +4,7 @@ import styles from '../styles/Convert.module.css';
 import HeaderComponent from '../components/header';
 import FooterComponent from '../components/footer';
 import SeoComponent from '../components/seo';
-// import SquareadComponent from '../components/squareAd';
+import SquareadComponent from '../components/squareAd';
 
 const Home = () => {
     const old_size = useRef(),
@@ -163,6 +163,7 @@ Home.getLayout = (page) => {
             thandle= '@sagar1596'
             tsite= 'www.sagarbhat.com'
              />
+             <SquareadComponent />
         <HeaderComponent />
         {page}
         <FooterComponent />

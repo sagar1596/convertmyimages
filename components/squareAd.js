@@ -8,7 +8,6 @@ const SquareadComponent = () => {
             (window.adsbygoogle = window.adsbygoogle || []).push({});
           }
         } catch (error) {
-          console.log("adsense error", error.message);
         }
       };
     
@@ -17,7 +16,6 @@ const SquareadComponent = () => {
       }, []);
     return (
         <div className={styles.square_ad_container}>
-            
             <ins className="adsbygoogle"
                 style={{ display:'block' }}
                 data-ad-client="ca-pub-7914014072217717"
