@@ -6,12 +6,14 @@ function MyApp({ Component, pageProps }) {
 
   return getLayout(
   <>
-  <script 
+  
+
+  {/* <script 
    async strategy="afterInteractive"
    onError={ (e) => { console.error('Script failed to load', e) }}
    data-checked-head="true"
    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7914014072217717"
-     ></script>
+     ></script> */}
   <Component {...pageProps} />
   </>
   )
