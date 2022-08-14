@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
-import { compressAccurately, compress } from 'image-conversion';
+import React, { useRef, useState, useEffect } from 'react';
 import styles from '../styles/Convert.module.css';
 import HeaderComponent from '../components/header';
 import FooterComponent from '../components/footer';
 import SeoComponent from '../components/seo';
+import b64toBlob from 'b64-to-blob';
+import fileDownload from 'js-file-download';
 // import SquareadComponent from '../components/squareAd';
 
 const Home = () => {
@@ -11,17 +12,41 @@ const Home = () => {
     old_type = useRef(),
     new_size = useRef(),
     new_type = useRef(),
-    required_size = useRef(),
+    fileName = useRef(),
     downloadSection = useRef(),
     quality = useRef(),
-    [convertedFile, setConvertedFile] = useState({}),
-    [compressType, setCompressType] = useState("size");
-
+    [uIFormat, setUIFormat] = useState(""),
+    [convertedFile, setConvertedFile] = useState({});
     
+    useEffect(() => {
+        const setDownloadArea = () => {
+            if(convertedFile && convertedFile.hasOwnProperty('size')) {
+                new_size.current.innerText = `Size: ${bytesToKbs(convertedFile.size)}`;
+                new_type.current.innerText = `Type: ${convertedFile.type}`;
+    
+                downloadSection.current.classList.remove('hidden');
+            }
+        }
+        setDownloadArea();
+    }, [convertedFile]);
 
-    const _handleConvert = () => {
+    const _handleUpload = (a) => {
+        const file = document.getElementById('imageupload').files[0];
+
+        fileName.current.innerText = file ? 
+            `File Name: ${file.name}` :
+            '';
         
-        const reqSize = required_size.current.value;
+        setUIFormat(file ? 
+            file.type :
+        'image/png');
+
+        
+        old_size.current.innerText = `Size: ${bytesToKbs(file.size)}`;
+        old_type.current.innerText = `Type: ${file.type}`;
+    }
+
+    const _handleConvert = async (format) => {
         const file = document.getElementById('imageupload').files[0];
 
         if(!file) {
@@ -29,60 +54,29 @@ const Home = () => {
             return;
         }
 
-        convertFile(reqSize);
-    }
+        const body = new FormData();
+        body.append("file", file);
 
-    const convertFile = (reqSize) => {
-        const file = document.getElementById('imageupload').files[0];
-        if(reqSize) {
-            compressAccurately(file,parseInt(reqSize)).then(res=>{
+        body.append("tf", format || "image/png");
 
-                setConvertedFile(res);
+        const response = await fetch('/api/convert', {
+            method: "POST",
+            body
+        });
 
-                old_size.current.innerText = `Size: ${bytesToKbs(file.size)}`;
-                old_type.current.innerText = `Type: ${file.type}`;
+        const data = await response.json();
 
-                new_size.current.innerText = `Size: ${bytesToKbs(res.size)}`;
-                new_type.current.innerText = `Type: ${res.type}`;
+        const blob = b64toBlob(data.b64Data, data.contentType);
 
-                downloadSection.current.classList.remove('hidden');
-            })
-        } else {
-            const qualityValue = quality.current.value || 1;
-            compress(file,qualityValue).then(res=>{
+        const [ fileName ] = file.name.split('.');
+        
 
-                setConvertedFile(res);
-
-                old_size.current.innerText = `Size: ${bytesToKbs(file.size)}`;
-                old_type.current.innerText = `Type: ${file.type}`;
-
-                new_size.current.innerText = `Size: ${bytesToKbs(res.size)}`;
-                new_type.current.innerText = `Type: ${res.type}`;
-
-                downloadSection.current.classList.remove('hidden');
-            })
-        }
-    }
-
-    const _handleDownload = () => {
-        saveFile(convertedFile, `converted-file`);
-    }
-
-    const saveFile = (blob, filename) => {
-        if (window.navigator.msSaveOrOpenBlob) {
-            window.navigator.msSaveOrOpenBlob(blob, filename);
-        } else {
-            const a = document.createElement('a');
-            document.body.appendChild(a);
-            const url = window.URL.createObjectURL(blob);
-            a.href = url;
-            a.download = filename;
-            a.click();
-            setTimeout(() => {
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            }, 0)
-        }
+        setConvertedFile({
+            blob: blob,
+            name: `${fileName}-converted.${data.extension}`,
+            size: blob.size,
+            type: blob.type
+        });
     }
 
     const bytesToKbs = (bytes) => {
@@ -90,46 +84,28 @@ const Home = () => {
         if (bytes == 0) return '0 Byte';
         var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
-     }
+    }
 
-     const _handleRadioChange = (val) => {
-         if(val.currentTarget.value) {
-            setCompressType(val.currentTarget.value);
-         }
-     }
-
+    const _handleDownload = () => {
+        fileDownload(convertedFile.blob, convertedFile.name);
+    }
 
     return (
 
         <div className={styles.container}>
 
-            <span className={ styles.instruction }>
-                Upload the image that you wish to compress and size/quality that you want it to be compressed to.
-            </span>
+            <label className={styles.label_style} htmlFor="imageupload">Choose File To Convert</label>
+            <input className={styles.upload_style} id="imageupload" type="file" onChange={_handleUpload}></input>
 
-            <label className={styles.label_style} htmlFor="imageupload">Choose File:</label>
-            <input id="imageupload" type="file"></input>
-
-            <div className = {styles.compress_type_container}>
-                <input type="radio" className={styles.input_radio} title="Compress to Size" checked={compressType === 'size'} placeholder="Compress to Size" name="compress_type" value="size" onChange={_handleRadioChange} />
-                <span className={styles.radio_label}>Size</span>
-                <input type="radio" className={styles.input_radio} title="Compress to Quality" placeholder="Compress to Quality" name="compress_type" value="quality" onChange={_handleRadioChange} />
-                <span className={styles.radio_label}>Quality</span>
-
-                {
-                    compressType === 'size' ? 
-                            ( 
-                            <>
-                            <input id="size_needed" className={styles.input_text} type="text" defaultValue="200" ref={ required_size }></input></> )
-                        : 
-                            (<>
-                            <input id="quality" className={styles.input_text} type="number" min="0" max='1' step='0.1' defaultValue='1.0' ref={ quality }></input></>)
-                }
+            <div className={styles.fileName_constainer}>
+                <span ref={fileName} className={styles.fileName}></span>
             </div>
 
-            
-
-            <button className={styles.convert_btn} onClick={_handleConvert}>Compress</button>
+            <div className={styles.btns_container}>
+                <button className={styles.convert_btn} data-format="image/png" onClick={() => _handleConvert("image/png")} data-hidden={uIFormat === 'image/png' ? 'hidden' : ''}>Convert To PNG</button>
+                <button className={styles.convert_btn} data-format="image/jpeg" onClick={() => _handleConvert("image/jpeg")} data-hidden={(uIFormat === 'image/jpg' || uIFormat === 'image/jpeg') ? 'hidden' : ''}>Convert To JPEG</button>
+                <button className={styles.convert_btn} data-format="image/bmp" onClick={() => _handleConvert("image/bmp")} data-hidden={uIFormat === 'image/bmp' ? 'hidden' : ''}>Convert To BMP</button>
+            </div>
 
             <div className={styles.downloadFile + ' hidden'} ref= { downloadSection }>
                 <div className={styles.old}>
@@ -142,7 +118,7 @@ const Home = () => {
                     <span className="size" ref={ new_size }></span>
                     <span className="type" ref={ new_type }></span>
 
-                    <button type="button" className={styles.download_btn} onClick={_handleDownload}>Download</button>
+                    <button type="button" className={styles.download_btn} onClick={_handleDownload} >Download</button>
                 </div>
             </div>
         </div>

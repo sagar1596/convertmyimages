@@ -5,9 +5,10 @@
     background: #39485c;
     align-items: center;
     padding-left: 1rem;
-    position: absolute;
+    position: fixed;
     bottom: 0;
     font-size: 0.8rem;
     justify-content: right;
     padding-right: 1rem;
+    color: #e8c647;
 }

@@ -1,9 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { compressAccurately, compress } from 'image-conversion';
+import { compressAccurately, compress, filetoDataURL } from 'image-conversion';
 import styles from '../styles/Convert.module.css';
 import HeaderComponent from '../components/header';
 import FooterComponent from '../components/footer';
 import SeoComponent from '../components/seo';
+import b64toBlob from 'b64-to-blob';
+import fileDownload from 'js-file-download';
+
 
 const ToPNG = () => {
     const old_size = useRef(),
@@ -18,25 +21,41 @@ const ToPNG = () => {
 
     
 
-    const _handleConvert = () => {
+    const _handleConvert = async () => {
         
-        const file = document.getElementById('imageupload').files[0];
+        const fileToConvert = document.getElementById('imageupload').files[0];
 
-        if(!file) {
+        if(!fileToConvert) {
             alert("File not provided");
             return;
         }
 
-        switch(compressType) {
-            case "size":
-                const reqSize = required_size.current.value;
-                convertFile(1, reqSize);
-                break;
-            case "quality":
-                const reqQuality = quality.current.value;
-                convertFile(2, reqQuality);
-                break;
-        }
+        _sendFileToConvert(fileToConvert);
+
+        
+        
+    }
+
+    const _sendFileToConvert = async (file) => {
+        const body = new FormData();
+        body.append("file", file);
+
+        const options = {};
+        
+        body.append("tf", "image/png");
+        body.append("size", required_size.current.value);
+        body.append("quality", quality.current.value);
+
+        const response = await fetch('/api/topng', {
+            method: "POST",
+            body
+        });
+        const data = await response.json();
+        // console.log(data);
+        const blob = b64toBlob(data.b64Data, data.contentType);
+        // console.log(blob);
+        const [ fileName ] = file.name.split('.');
+        fileDownload(blob, `${fileName}-resized.${data.extension}`);
         
     }
 
@@ -122,22 +141,13 @@ const ToPNG = () => {
             <label className={styles.label_style} htmlFor="imageupload">Choose File:</label>
             <input id="imageupload" type="file"></input>
 
-            <div className = {styles.compress_type_container}>
-                <input type="radio" className={styles.input_radio} title="Compress to Size" checked={compressType === 'size'} placeholder="Compress to Size" name="compress_type" value="size" onChange={_handleRadioChange} />
-                <span className={styles.radio_label}>Size</span>
-                <input type="radio" className={styles.input_radio} title="Compress to Quality" placeholder="Compress to Quality" name="compress_type" value="quality" onChange={_handleRadioChange} />
-                <span className={styles.radio_label}>Quality</span>
-
-                {
-                    compressType === 'size' ? 
-                            ( 
-                            <>
-                            <input id="size_needed" className={styles.input_text} type="text" defaultValue="200" ref={ required_size }></input></> )
-                        : 
-                            (<>
-                            <input id="quality" className={styles.input_text} type="number" min="0" max='1' step='0.1' defaultValue='1.0' ref={ quality }></input></>)
-                }
-            </div>
+            <form id="data-form" className = {styles.compress_type_container}>
+                <label htmlFor="size">Size: </label>
+                <input title="Required Size" className={styles.input_text} type="text" name="size" defaultValue="200" ref={ required_size } />
+                <label htmlFor="quality">Quality: </label>
+                <input title="Required Quality" className={styles.input_text} name="quality" type="number" min="10" max='100' step='10' defaultValue='100' ref={ quality } />
+                
+            </form>
 
             
 

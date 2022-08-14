@@ -5,6 +5,8 @@
     background: #39485c;
     align-items: center;
     padding-left: 1rem;
+    position: fixed;
+    top: 0;
 }
 .logo {
     display: block;
