@@ -6,6 +6,7 @@ import SeoComponent from '../components/seo';
 import b64toBlob from 'b64-to-blob';
 import fileDownload from 'js-file-download';
 // import SquareadComponent from '../components/squareAd';
+import FileBase64 from 'react-file-base64';
 
 const Home = () => {
     const old_size = useRef(),
@@ -16,7 +17,8 @@ const Home = () => {
     downloadSection = useRef(),
     quality = useRef(),
     [uIFormat, setUIFormat] = useState(""),
-    [convertedFile, setConvertedFile] = useState({});
+    [convertedFile, setConvertedFile] = useState({}),
+    [files, setFiles] = useState([]);
     
     useEffect(() => {
         const setDownloadArea = () => {
@@ -30,8 +32,20 @@ const Home = () => {
         setDownloadArea();
     }, [convertedFile]);
 
+    const getFiles = (files) => {
+        setFiles(files);
+
+        fileName.current.innerText = files[0] ? 
+        `File Name: ${files[0].name}` :
+        '';
+    
+        setUIFormat(files[0] ? 
+            files[0].type :
+        'image/png');
+      }
+
     const _handleUpload = (a) => {
-        const file = document.getElementById('imageupload').files[0];
+        const file = files[0];
 
         fileName.current.innerText = file ? 
             `File Name: ${file.name}` :
@@ -47,25 +61,29 @@ const Home = () => {
     }
 
     const _handleConvert = async (format) => {
-        const file = document.getElementById('imageupload').files[0];
+        const file = files[0];
 
         if(!file) {
             alert("File not provided");
             return;
         }
 
-        const body = new FormData();
-        body.append("file", file);
+        const body = {};
+        body.file = file.base64;
 
-        body.append("tf", format || "image/png");
+        body.tf =  format || "image/png";
 
         const response = await fetch('/api/convert', {
             method: "POST",
-            body
+            headers: {
+                Accept: 'application.json',
+                'Content-Type': 'application/json'
+              },
+            body: JSON.stringify(body)
         });
 
         const data = await response.json();
-
+        console.log("data", data);
         const blob = b64toBlob(data.b64Data, data.contentType);
 
         const [ fileName ] = file.name.split('.');
@@ -96,6 +114,10 @@ const Home = () => {
 
             <label className={styles.label_style} htmlFor="imageupload">Choose File To Convert</label>
             <input className={styles.upload_style} id="imageupload" type="file" onChange={_handleUpload}></input>
+
+            <FileBase64
+                multiple={ true }
+                onDone={ getFiles.bind(this) } />
 
             <div className={styles.fileName_constainer}>
                 <span ref={fileName} className={styles.fileName}></span>
