@@ -5,8 +5,10 @@ import { quality } from "jimp";
 
 export const config = {
   api: {
-    bodyParser: false,
-    responseLimit: '20mb'
+    bodyParser: {
+      sizeLimit: '25mb'
+    },
+    responseLimit: '27mb'
   }
 };
 
