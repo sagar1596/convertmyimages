@@ -32,6 +32,20 @@ const Home = () => {
         setDownloadArea();
     }, [convertedFile]);
 
+    const bytesToKbs = (bytes) => {
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes == 0) return '0 Byte';
+        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+    }
+    function kbToBytes(kilobytes) {
+        var Bytes = 0;
+        // Calculates Bytes
+        // 1 KB = 1024 bytes
+        Bytes = kilobytes * 1024;
+        return Bytes;
+    }
+
     const getFiles = (files) => {
         setFiles(files);
 
@@ -42,7 +56,11 @@ const Home = () => {
         setUIFormat(files[0] ? 
             files[0].type :
         'image/png');
+
+        old_size.current.innerText = `Size: ${bytesToKbs(kbToBytes(parseInt(files[0].size.replace(' kB', '')) ))}`;
+        old_type.current.innerText = `Type: ${files[0].type}`;
       }
+      
 
     const _handleUpload = (a) => {
         const file = files[0];
@@ -56,7 +74,7 @@ const Home = () => {
         'image/png');
 
         
-        old_size.current.innerText = `Size: ${bytesToKbs(file.size)}`;
+        old_size.current.innerText = `Size: ${bytesToKbs(kbToBytes(file.size))}`;
         old_type.current.innerText = `Type: ${file.type}`;
     }
 
@@ -97,13 +115,6 @@ const Home = () => {
         });
     }
 
-    const bytesToKbs = (bytes) => {
-        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-        if (bytes == 0) return '0 Byte';
-        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
-    }
-
     const _handleDownload = () => {
         fileDownload(convertedFile.blob, convertedFile.name);
     }
@@ -117,7 +128,7 @@ const Home = () => {
 
             <FileBase64
                 multiple={ true }
-                onDone={ getFiles.bind(this) } />
+                onDone={ getFiles } />
 
             <div className={styles.fileName_constainer}>
                 <span ref={fileName} className={styles.fileName}></span>
@@ -126,7 +137,7 @@ const Home = () => {
             <div className={styles.btns_container}>
                 <button className={styles.convert_btn} data-format="image/png" onClick={() => _handleConvert("image/png")} data-hidden={uIFormat === 'image/png' ? 'hidden' : ''}>Convert To PNG</button>
                 <button className={styles.convert_btn} data-format="image/jpeg" onClick={() => _handleConvert("image/jpeg")} data-hidden={(uIFormat === 'image/jpg' || uIFormat === 'image/jpeg') ? 'hidden' : ''}>Convert To JPEG</button>
-                <button className={styles.convert_btn} data-format="image/bmp" onClick={() => _handleConvert("image/bmp")} data-hidden={uIFormat === 'image/bmp' ? 'hidden' : ''}>Convert To BMP</button>
+                {/* <button className={styles.convert_btn} data-format="image/bmp" onClick={() => _handleConvert("image/bmp")} data-hidden={uIFormat === 'image/bmp' ? 'hidden' : ''}>Convert To BMP</button> */}
             </div>
 
             <div className={styles.downloadFile + ' hidden'} ref= { downloadSection }>

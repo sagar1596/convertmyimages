@@ -1,14 +1,11 @@
-import formidable from "formidable";
-import fs from "fs";
-import jimp from 'jimp';
-import { quality } from "jimp";
+import sharp from "sharp";
 
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '25mb'
+      sizeLimit: '50mb'
     },
-    responseLimit: '27mb'
+    responseLimit: '50mb'
   }
 };
 
@@ -19,27 +16,26 @@ const post = async (req, res) => {
     targetFormat = req.body.tf || "image/png";
 
     // Read the image
-    const img = await jimp.read(Buffer.from(file.split("base64,")[1], 'base64'));
+    let img = await sharp(Buffer.from(file.split("base64,")[1], 'base64'));
+
 
     // Create a buffer based on required format
-    let formatMIME = jimp.MIME_PNG;
     switch(targetFormat) {
       case "image/png":
-        formatMIME = jimp.MIME_PNG;
+        img = await img.png();
         break;
       case "image/jpeg":
       case "image/jpg":
-        formatMIME = jimp.MIME_JPEG;
+        img = await img.jpeg();
         break;
       case "image/bmp":
-        formatMIME = jimp.MIME_BMP;
         break;
     }
 
 
-
-    const bufferConverted = await img.getBufferAsync(formatMIME);
+    const bufferConverted = await img.toBuffer();
     const base64Data = bufferConverted.toString('base64');
+
     res.status(202).json({ b64Data: base64Data, contentType: targetFormat, extension:targetFormat.split('/')[1]});
   } catch(err) {
     console.log(err);
