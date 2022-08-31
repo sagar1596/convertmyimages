@@ -6,7 +6,7 @@ import SeoComponent from '../components/seo';
 import b64toBlob from 'b64-to-blob';
 import fileDownload from 'js-file-download';
 // import SquareadComponent from '../components/squareAd';
-import FileBase64 from 'react-file-base64';
+import FileBase64 from '../helpers/react-file-base64';
 
 const Home = () => {
     const old_size = useRef(),
@@ -32,32 +32,24 @@ const Home = () => {
         setDownloadArea();
     }, [convertedFile]);
 
-    const getFiles = (files) => {
-        setFiles(files);
-
-        fileName.current.innerText = files[0] ? 
-        `File Name: ${files[0].name}` :
-        '';
-    
-        setUIFormat(files[0] ? 
-            files[0].type :
-        'image/png');
-      }
-
-    const _handleUpload = (a) => {
-        const file = files[0];
-
-        fileName.current.innerText = file ? 
-            `File Name: ${file.name}` :
+    useEffect(() => {
+        if(files.length > 0) {
+            const file = files[0];
+            fileName.current.innerText = files[0] ? 
+            `File Name: ${files[0].name}` :
             '';
         
-        setUIFormat(file ? 
-            file.type :
-        'image/png');
+            setUIFormat(files[0] ? 
+                files[0].type :
+            'image/png');
+            old_size.current.innerText = `Size: ${bytesToKbs(kbToBytes(file.size.replace(' kB', '')))}`;
+            old_type.current.innerText = `Type: ${file.type}`;
+            downloadSection.current.classList.add('hidden');
+        }
+    }, [files]);
 
-        
-        old_size.current.innerText = `Size: ${bytesToKbs(file.size)}`;
-        old_type.current.innerText = `Type: ${file.type}`;
+    const getFiles = (files) => {
+        setFiles(files);
     }
 
     const _handleConvert = async (format) => {
@@ -104,6 +96,15 @@ const Home = () => {
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
     }
 
+    function kbToBytes(kilobytes) {
+        var Bytes = 0;
+        // Calculates Bytes
+        // 1 KB = 1024 bytes
+        Bytes = kilobytes * 1024;
+        return Bytes;
+    }
+
+
     const _handleDownload = () => {
         fileDownload(convertedFile.blob, convertedFile.name);
     }
@@ -113,9 +114,9 @@ const Home = () => {
         <div className={styles.container}>
 
             <label className={styles.label_style} htmlFor="imageupload">Choose File To Convert</label>
-            <input className={styles.upload_style} id="imageupload" type="file" onChange={_handleUpload}></input>
-
             <FileBase64
+                id="imageupload"
+                class="hidden"
                 multiple={ true }
                 onDone={ getFiles.bind(this) } />
 
