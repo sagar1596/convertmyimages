@@ -53,7 +53,8 @@ const Home = () => {
     }
 
     const onDeleteClick = (e) => {
-
+        setFiles([]);
+        setUIFormat("");
     }
 
     const _handleConvert = async (format) => {
@@ -124,9 +125,9 @@ const Home = () => {
                 multiple={ true }
                 onDone={ getFiles.bind(this) } />
 
-            <div className={styles.fileName_constainer}>
+            <div className={styles.fileName_constainer} data-hidden={files.length > 0 ? '' : 'hidden'}>
                 <span ref={fileName} className={styles.fileName}></span>
-                <span classList={styles.deleteBtn} onClick={onDeleteClick}></span>
+                <span className={styles.delete_btn} onClick={onDeleteClick}></span>
             </div>
 
             <div className={styles.btns_container}>
