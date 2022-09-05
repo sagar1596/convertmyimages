@@ -70,6 +70,12 @@
     height: 3rem;
 }
 
+.convert_btn[data-disabled="disabled"] {
+    background-color: gray;
+    border: none;
+    pointer-events: none;
+}
+
 .convert_btn[data-hidden="hidden"] {
     display: none;
 }

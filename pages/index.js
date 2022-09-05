@@ -52,6 +52,10 @@ const Home = () => {
         setFiles(files);
     }
 
+    const onDeleteClick = (e) => {
+
+    }
+
     const _handleConvert = async (format) => {
         const file = files[0];
 
@@ -122,12 +126,25 @@ const Home = () => {
 
             <div className={styles.fileName_constainer}>
                 <span ref={fileName} className={styles.fileName}></span>
+                <span classList={styles.deleteBtn} onClick={onDeleteClick}></span>
             </div>
 
             <div className={styles.btns_container}>
-                <button className={styles.convert_btn} data-format="image/png" onClick={() => _handleConvert("image/png")} data-hidden={uIFormat === 'image/png' ? 'hidden' : ''}>Convert To PNG</button>
-                <button className={styles.convert_btn} data-format="image/jpeg" onClick={() => _handleConvert("image/jpeg")} data-hidden={(uIFormat === 'image/jpg' || uIFormat === 'image/jpeg') ? 'hidden' : ''}>Convert To JPEG</button>
-                <button className={styles.convert_btn} data-format="image/bmp" onClick={() => _handleConvert("image/bmp")} data-hidden={uIFormat === 'image/bmp' ? 'hidden' : ''}>Convert To BMP</button>
+                <button className={styles.convert_btn} 
+                    data-format="image/png" 
+                    data-disabled={files.length > 0 ? '' : 'disabled'}
+                    onClick={() => _handleConvert("image/png")} 
+                    data-hidden={uIFormat === 'image/png' ? 'hidden' : ''}>Convert To PNG</button>
+                <button className={styles.convert_btn} 
+                    data-format="image/jpeg" 
+                    data-disabled={files.length > 0 ? '' : 'disabled'}
+                    onClick={() => _handleConvert("image/jpeg")} 
+                    data-hidden={(uIFormat === 'image/jpg' || uIFormat === 'image/jpeg') ? 'hidden' : ''}>Convert To JPEG</button>
+                <button className={styles.convert_btn} 
+                    data-format="image/bmp" 
+                    data-disabled={files.length > 0 ? '' : 'disabled'}
+                    onClick={() => _handleConvert("image/bmp")} 
+                    data-hidden={uIFormat === 'image/bmp' ? 'hidden' : ''}>Convert To BMP</button>
             </div>
 
             <div className={styles.downloadFile + ' hidden'} ref= { downloadSection }>
