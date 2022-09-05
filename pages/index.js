@@ -69,6 +69,7 @@ const Home = () => {
         body.file = file.base64;
 
         body.tf =  format || "image/png";
+        body.quality = quality.current.value || 1;
 
         const response = await fetch('/api/convert', {
             method: "POST",
@@ -128,6 +129,12 @@ const Home = () => {
             <div className={styles.fileName_constainer} data-hidden={files.length > 0 ? '' : 'hidden'}>
                 <span ref={fileName} className={styles.fileName}></span>
                 <span className={styles.delete_btn} onClick={onDeleteClick}></span>
+            </div>
+
+            <div className={styles.additional_settings}>
+                <label htmlFor='quality'>Quality</label>
+                <input type='number' min='0' max='100' step='1' ref={quality} />
+
             </div>
 
             <div className={styles.btns_container}>

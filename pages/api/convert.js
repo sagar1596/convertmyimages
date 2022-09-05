@@ -1,7 +1,6 @@
 import formidable from "formidable";
 import fs from "fs";
 import jimp from 'jimp';
-import { quality } from "jimp";
 
 export const config = {
   api: {
@@ -16,11 +15,12 @@ const post = async (req, res) => {
   try {
 
     const file = req.body.file,
-    targetFormat = req.body.tf || "image/png";
+    targetFormat = req.body.tf || "image/png",
+    quality = parseInt(req.body.quality) || 100;
 
     // Read the image
-    const img = await jimp.read(Buffer.from(file.split("base64,")[1], 'base64'));
-
+    let img = await jimp.read(Buffer.from(file.split("base64,")[1], 'base64'));
+    img = await img.quality(quality);
     // Create a buffer based on required format
     let formatMIME = jimp.MIME_PNG;
     switch(targetFormat) {
@@ -39,11 +39,12 @@ const post = async (req, res) => {
 
 
     const bufferConverted = await img.getBufferAsync(formatMIME);
+
     const base64Data = bufferConverted.toString('base64');
     res.status(202).json({ b64Data: base64Data, contentType: targetFormat, extension:targetFormat.split('/')[1]});
   } catch(err) {
     console.log(err);
-    res.status(404).end();
+    res.status(404).json({message: err.message}).end();
   }
 
   
