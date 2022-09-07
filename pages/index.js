@@ -16,6 +16,8 @@ const Home = () => {
     fileName = useRef(),
     downloadSection = useRef(),
     grey = useRef(),
+    width = useRef(),
+    height = useRef(),
     quality = useRef(),
     [uIFormat, setUIFormat] = useState(""),
     [convertedFile, setConvertedFile] = useState({}),
@@ -72,6 +74,17 @@ const Home = () => {
         body.tf =  format || "image/png";
         body.quality = quality.current.value || 1;
         body.gs = grey.current.checked;
+        const fixedSize = {};
+        if(width && width.current.value !== '' && parseInt(width.current.value) > 0) {
+            fixedSize.width = parseInt(width.current.value);
+        }
+        if(height && height.current.value !== '' && parseInt(height.current.value) > 0) {
+            fixedSize.height = parseInt(height.current.value);
+        }
+
+        if(fixedSize.width || fixedSize.height) {
+            body.fixedSize = fixedSize;
+        }
 
         const response = await fetch('/api/convert', {
             method: "POST",
@@ -136,11 +149,17 @@ const Home = () => {
             <div className={styles.additional_settings}>
                 <div className={styles.option_container}>
                     <label htmlFor='quality'>Quality</label>
-                    <input title="Quality" placeholder="1-100" type='number' min='0' max='100' step='1' ref={quality} />
+                    <input title='Quality' placeholder="1-100" type='number' min='0' max='100' step='1' ref={quality} />
                 </div>
                 <div className={styles.option_container}>
                     <label htmlFor='grey'>Greyscale</label>
-                    <input title="Greyscale" placeholder='Greyscale' type='checkbox' value="false" name="gray" ref={grey} />
+                    <input title='Greyscale' placeholder='Greyscale' type='checkbox' value="false" name="gray" ref={grey} />
+                </div>
+
+                <div className={styles.option_container}>
+                    <label htmlFor='width'>Fixed Size</label>
+                    <input title='Width' placeholder='Width' type='number' name='width' step='1' ref={width} />
+                    <input title='Height' placeholder='Height' type='number' name='height' step='1' ref={height} />
                 </div>
 
 
