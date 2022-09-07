@@ -96,8 +96,17 @@
 }
 
 .additional_settings {
-    
+
 }
+
+.option_container {
+
+}
+
+.option_container label, .option_container input[type='number'] {
+    width: 6rem;
+}
+
 
 /* New */
 

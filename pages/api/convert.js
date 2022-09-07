@@ -16,11 +16,15 @@ const post = async (req, res) => {
 
     const file = req.body.file,
     targetFormat = req.body.tf || "image/png",
+    greyScale = req.body.gs || false,
     quality = parseInt(req.body.quality) || 100;
 
     // Read the image
     let img = await jimp.read(Buffer.from(file.split("base64,")[1], 'base64'));
     img = await img.quality(quality);
+    if(greyScale) {
+      img = await img.greyscale();
+    }
     // Create a buffer based on required format
     let formatMIME = jimp.MIME_PNG;
     switch(targetFormat) {

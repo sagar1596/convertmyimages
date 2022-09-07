@@ -15,6 +15,7 @@ const Home = () => {
     new_type = useRef(),
     fileName = useRef(),
     downloadSection = useRef(),
+    grey = useRef(),
     quality = useRef(),
     [uIFormat, setUIFormat] = useState(""),
     [convertedFile, setConvertedFile] = useState({}),
@@ -70,6 +71,7 @@ const Home = () => {
 
         body.tf =  format || "image/png";
         body.quality = quality.current.value || 1;
+        body.gs = grey.current.checked;
 
         const response = await fetch('/api/convert', {
             method: "POST",
@@ -132,8 +134,15 @@ const Home = () => {
             </div>
 
             <div className={styles.additional_settings}>
-                <label htmlFor='quality'>Quality</label>
-                <input type='number' min='0' max='100' step='1' ref={quality} />
+                <div className={styles.option_container}>
+                    <label htmlFor='quality'>Quality</label>
+                    <input title="Quality" placeholder="1-100" type='number' min='0' max='100' step='1' ref={quality} />
+                </div>
+                <div className={styles.option_container}>
+                    <label htmlFor='grey'>Greyscale</label>
+                    <input title="Greyscale" placeholder='Greyscale' type='checkbox' value="false" name="gray" ref={grey} />
+                </div>
+
 
             </div>
 
