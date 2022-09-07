@@ -7,6 +7,13 @@ import b64toBlob from 'b64-to-blob';
 import fileDownload from 'js-file-download';
 // import SquareadComponent from '../components/squareAd';
 import FileBase64 from '../helpers/react-file-base64';
+import {
+    Accordion,
+    AccordionItem,
+    AccordionItemHeading,
+    AccordionItemButton,
+    AccordionItemPanel,
+} from 'react-accessible-accordion';
 
 const Home = () => {
     const old_size = useRef(),
@@ -19,9 +26,13 @@ const Home = () => {
     width = useRef(),
     height = useRef(),
     quality = useRef(),
+    scaleFactor = useRef(),
+    scaleWidth = useRef(),
+    scaleHeight = useRef(),
     [uIFormat, setUIFormat] = useState(""),
     [convertedFile, setConvertedFile] = useState({}),
-    [files, setFiles] = useState([]);
+    [files, setFiles] = useState([]),
+    [accordionState, setAccordionState] = useState(false);
     
     useEffect(() => {
         const setDownloadArea = () => {
@@ -81,9 +92,23 @@ const Home = () => {
         if(height && height.current.value !== '' && parseInt(height.current.value) > 0) {
             fixedSize.height = parseInt(height.current.value);
         }
-
         if(fixedSize.width || fixedSize.height) {
             body.fixedSize = fixedSize;
+        }
+
+        const scaleInfo = {};
+        if(scaleFactor) {
+            scaleInfo.scaleFactor = parseInt(scaleFactor.current.value);
+        }
+        if(scaleWidth && scaleWidth.current.value !== '' && parseInt(scaleWidth.current.value) > 0) {
+            scaleInfo.width = parseInt(scaleWidth.current.value);
+        }
+        if(scaleHeight && scaleHeight.current.value !== '' && parseInt(scaleHeight.current.value) > 0) {
+            scaleInfo.height = parseInt(scaleHeight.current.value);
+        }
+
+        if(scaleInfo) {
+            body.scaleInfo = scaleInfo;
         }
 
         const response = await fetch('/api/convert', {
@@ -130,6 +155,10 @@ const Home = () => {
         fileDownload(convertedFile.blob, convertedFile.name);
     }
 
+    const _accordionChange = (state) => {
+        setAccordionState(state.length === 0 ? false : true);
+    }
+
     return (
 
         <div className={styles.container}>
@@ -146,24 +175,46 @@ const Home = () => {
                 <span className={styles.delete_btn} onClick={onDeleteClick}></span>
             </div>
 
-            <div className={styles.additional_settings}>
-                <div className={styles.option_container}>
-                    <label htmlFor='quality'>Quality</label>
-                    <input title='Quality' placeholder="1-100" type='number' min='0' max='100' step='1' ref={quality} />
-                </div>
-                <div className={styles.option_container}>
-                    <label htmlFor='grey'>Greyscale</label>
-                    <input title='Greyscale' placeholder='Greyscale' type='checkbox' value="false" name="gray" ref={grey} />
-                </div>
 
-                <div className={styles.option_container}>
-                    <label htmlFor='width'>Fixed Size</label>
-                    <input title='Width' placeholder='Width' type='number' name='width' step='1' ref={width} />
-                    <input title='Height' placeholder='Height' type='number' name='height' step='1' ref={height} />
-                </div>
+            <Accordion allowZeroExpanded="true" onChange={_accordionChange}>
+                <AccordionItem>
+                    <AccordionItemHeading className={accordionState ? styles.expanded : styles.collapsed}>
+                        <AccordionItemButton>
+                            Advanced Settings
+                            <span className={styles.toggleIcon}> ^ </span>
+                        </AccordionItemButton>
+                    </AccordionItemHeading>
+                    <AccordionItemPanel>
+                    <div className={styles.additional_settings}>
+                        <div className={styles.option_container}>
+                            <label htmlFor='quality'>Quality</label>
+                            <input title='Quality' placeholder="1-100" type='number' min='0' max='100' step='1' ref={quality} />
+                        </div>
 
+                        <div className={styles.option_container}>
+                            <label htmlFor='grey'>Greyscale</label>
+                            <input title='Greyscale' placeholder='Greyscale' type='checkbox' value="false" name="gray" ref={grey} />
+                        </div>
 
-            </div>
+                        <div className={styles.option_container}>
+                            <label htmlFor='width'>Fixed Size</label>
+                            <input title='Width' placeholder='Width' type='number' name='width' step='1' ref={width} />
+                            <input title='Height' placeholder='Height' type='number' name='height' step='1' ref={height} />
+                        </div>
+
+                        <div className={styles.option_container}>
+                            <label htmlFor='scale'>Scale</label>
+                            <input title='Scale' placeholder='0-1' name='scale' type='number' min='0' max='1' step='0.1' ref={scaleFactor} />
+                            <div className={styles.scaleSizeContainer}>
+                                <label className={styles.scaleSize} htmlFor='scaleWidth'>Scale Size</label>
+                                <input title='Width' placeholder='Width' type='number' name='scaleWidth' step='1' ref={scaleWidth} />
+                                <input title='Height' placeholder='Height' type='number' name='scaleHeight' step='1' ref={scaleHeight} />
+                            </div>
+                        </div>
+                    </div>
+                    </AccordionItemPanel>
+                </AccordionItem>
+            </Accordion>
 
             <div className={styles.btns_container}>
                 <button className={styles.convert_btn} 

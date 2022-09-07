@@ -18,6 +18,7 @@ const post = async (req, res) => {
     targetFormat = req.body.tf || "image/png",
     greyScale = req.body.gs || false,
     fixedSize = req.body.fixedSize || {},
+    scaleInfo = req.body.scaleInfo || {},
     quality = parseInt(req.body.quality) || 100;
 
     // Read the image
@@ -26,9 +27,16 @@ const post = async (req, res) => {
     if(greyScale) {
       img = await img.greyscale();
     }
-    if(fixedSize) {
+    if(fixedSize.hasOwnProperty('width') || fixedSize.hasOwnProperty('height')) {
       img = await img.resize( fixedSize.width || jimp.AUTO, fixedSize.height || jimp.AUTO )
     }
+
+    if(scaleInfo.width || scaleInfo.height) {
+      img = await img.scaleToFit(scaleInfo.width || jimp.AUTO, scaleInfo.height || jimp.AUTO);
+    } else if(scaleInfo.hasOwnProperty('scaleFactor')) {
+      img = await img.scale( scaleInfo.scaleFactor );
+    }
+
     // Create a buffer based on required format
     let formatMIME = jimp.MIME_PNG;
     switch(targetFormat) {

@@ -107,6 +107,25 @@
     width: 6rem;
 }
 
+.scaleSizeContainer {
+    display: block;
+}
+
+.collapsed, .expanded {
+    position: relative;
+}
+
+.collapsed .toggleIcon, .expanded .toggleIcon {
+    position: absolute;
+    right: 0;
+    line-height: 1.8rem;
+}
+
+.collapsed .toggleIcon {
+    rotate: 180deg;
+    line-height: 1.1;
+}
+
 
 /* New */
 
