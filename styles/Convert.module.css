@@ -126,6 +126,55 @@
     line-height: 1.1;
 }
 
+.container .Collapsible {
+    background-color: #7a7a7a;
+}
+
+.container .Collapsible__contentInner {
+    padding: 10px;
+    border: 1px solid #fff;
+    border-top: 0;
+}
+
+.container .Collapsible__contentInner p {
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.container .Collapsible__contentInner p:last-child {
+    margin-bottom: 0;
+}
+
+.container .Collapsible__trigger {
+    display: block;
+    font-weight: 400;
+    text-decoration: none;
+    position: relative;
+    padding: 10px;
+    background: #b1afaf;
+    color: #000;
+}
+
+.container .Collapsible__trigger:after {
+    content: '\21E3';
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    display: block;
+    transition: transform 300ms;
+    font-size: 1.2rem;
+}
+
+.container .Collapsible__trigger.is-open:after {
+    transform: rotateZ(180deg);
+}
+
+.container .Collapsible__trigger.is-disabled {
+opacity: 0.5;
+background-color: grey;
+}
+
 
 /* New */
 

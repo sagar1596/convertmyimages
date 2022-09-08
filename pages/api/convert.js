@@ -33,7 +33,7 @@ const post = async (req, res) => {
 
     if(scaleInfo.width || scaleInfo.height) {
       img = await img.scaleToFit(scaleInfo.width || jimp.AUTO, scaleInfo.height || jimp.AUTO);
-    } else if(scaleInfo.hasOwnProperty('scaleFactor')) {
+    } else if(scaleInfo.scaleFactor) {
       img = await img.scale( scaleInfo.scaleFactor );
     }
 

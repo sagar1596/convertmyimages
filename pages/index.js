@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import styles from '../styles/Convert.module.css';
+import '../styles/Convert.module.css';
 import HeaderComponent from '../components/header';
 import FooterComponent from '../components/footer';
 import SeoComponent from '../components/seo';
@@ -7,13 +7,8 @@ import b64toBlob from 'b64-to-blob';
 import fileDownload from 'js-file-download';
 // import SquareadComponent from '../components/squareAd';
 import FileBase64 from '../helpers/react-file-base64';
-import {
-    Accordion,
-    AccordionItem,
-    AccordionItemHeading,
-    AccordionItemButton,
-    AccordionItemPanel,
-} from 'react-accessible-accordion';
+
+import Collapsible from 'react-collapsible';
 
 const Home = () => {
     const old_size = useRef(),
@@ -83,7 +78,7 @@ const Home = () => {
         body.file = file.base64;
 
         body.tf =  format || "image/png";
-        body.quality = quality.current.value || 1;
+        body.quality = quality.current.value || 100;
         body.gs = grey.current.checked;
         const fixedSize = {};
         if(width && width.current.value !== '' && parseInt(width.current.value) > 0) {
@@ -161,94 +156,84 @@ const Home = () => {
 
     return (
 
-        <div className={styles.container}>
+        <div className='container'>
 
-            <label className={styles.label_style} htmlFor="imageupload">Choose File To Convert</label>
-            <FileBase64
+            <label className='label_style' htmlFor="imageupload">Choose File To Convert</label>
+             <FileBase64
                 id="imageupload"
                 class="hidden"
                 multiple={ true }
                 onDone={ getFiles.bind(this) } />
 
-            <div className={styles.fileName_constainer} data-hidden={files.length > 0 ? '' : 'hidden'}>
-                <span ref={fileName} className={styles.fileName}></span>
-                <span className={styles.delete_btn} onClick={onDeleteClick}></span>
+            <div className='fileName_constainer' data-hidden={files.length > 0 ? '' : 'hidden'}>
+                <span ref={fileName} className='fileName'></span>
+                <span className='delete_btn' onClick={onDeleteClick}></span>
             </div>
 
 
-            <Accordion allowZeroExpanded="true" onChange={_accordionChange}>
-                <AccordionItem>
-                    <AccordionItemHeading className={accordionState ? styles.expanded : styles.collapsed}>
-                        <AccordionItemButton>
-                            Advanced Settings
-                            <span className={styles.toggleIcon}> ^ </span>
-                        </AccordionItemButton>
-                    </AccordionItemHeading>
-                    <AccordionItemPanel>
-                    <div className={styles.additional_settings}>
-                        <div className={styles.option_container}>
+            <Collapsible trigger="Advanced Options">
+                    <div className='additional_settings'>
+                        <div className='option_container'>
                             <label htmlFor='quality'>Quality</label>
                             <input title='Quality' placeholder="1-100" type='number' min='0' max='100' step='1' ref={quality} />
                         </div>
 
-                        <div className={styles.option_container}>
+                        <div className='option_container'>
                             <label htmlFor='grey'>Greyscale</label>
                             <input title='Greyscale' placeholder='Greyscale' type='checkbox' value="false" name="gray" ref={grey} />
                         </div>
 
-                        <div className={styles.option_container}>
+                        <div className='option_container'>
                             <label htmlFor='width'>Fixed Size</label>
                             <input title='Width' placeholder='Width' type='number' name='width' step='1' ref={width} />
                             <input title='Height' placeholder='Height' type='number' name='height' step='1' ref={height} />
                         </div>
 
-                        <div className={styles.option_container}>
+                        <div className='option_container'>
                             <label htmlFor='scale'>Scale</label>
                             <input title='Scale' placeholder='0-1' name='scale' type='number' min='0' max='1' step='0.1' ref={scaleFactor} />
-                            <div className={styles.scaleSizeContainer}>
-                                <label className={styles.scaleSize} htmlFor='scaleWidth'>Scale Size</label>
+                            <div className='scaleSizeContainer'>
+                                <label className='scaleSize' htmlFor='scaleWidth'>Scale Size</label>
                                 <input title='Width' placeholder='Width' type='number' name='scaleWidth' step='1' ref={scaleWidth} />
                                 <input title='Height' placeholder='Height' type='number' name='scaleHeight' step='1' ref={scaleHeight} />
                             </div>
                         </div>
                     </div>
-                    </AccordionItemPanel>
-                </AccordionItem>
-            </Accordion>
+            </Collapsible>
 
-            <div className={styles.btns_container}>
-                <button className={styles.convert_btn} 
+            <div className='btns_container'>
+                <button className='convert_btn' 
                     data-format="image/png" 
                     data-disabled={files.length > 0 ? '' : 'disabled'}
                     onClick={() => _handleConvert("image/png")} 
                     data-hidden={uIFormat === 'image/png' ? 'hidden' : ''}>Convert To PNG</button>
-                <button className={styles.convert_btn} 
+                <button className='convert_btn' 
                     data-format="image/jpeg" 
                     data-disabled={files.length > 0 ? '' : 'disabled'}
                     onClick={() => _handleConvert("image/jpeg")} 
                     data-hidden={(uIFormat === 'image/jpg' || uIFormat === 'image/jpeg') ? 'hidden' : ''}>Convert To JPEG</button>
-                <button className={styles.convert_btn} 
+                <button className='convert_btn' 
                     data-format="image/bmp" 
                     data-disabled={files.length > 0 ? '' : 'disabled'}
                     onClick={() => _handleConvert("image/bmp")} 
                     data-hidden={uIFormat === 'image/bmp' ? 'hidden' : ''}>Convert To BMP</button>
             </div>
 
-            <div className={styles.downloadFile + ' hidden'} ref= { downloadSection }>
-                <div className={styles.old}>
-                    <span className={styles.title}>Old</span>
+            <div className='downloadFile hidden' ref= { downloadSection }>
+                <div className='old'>
+                    <span className='title'>Old</span>
                     <span className="size" ref={ old_size }></span>
                     <span className="type" ref={ old_type }></span>
                 </div>
-                <div className={styles.new}>
-                    <span className={styles.title}>New</span>
+                <div className='new'>
+                    <span className='title'>New</span>
                     <span className="size" ref={ new_size }></span>
                     <span className="type" ref={ new_type }></span>
 
-                    <button type="button" className={styles.download_btn} onClick={_handleDownload} >Download</button>
+                    <button type="button" className='download_btn' onClick={_handleDownload} >Download</button>
                 </div>
             </div>
-        </div>
+        </div> 
     )
 }
 
