@@ -115,6 +115,10 @@ const Home = () => {
             body.flip = flip;
         }
 
+        if(rotate && rotate.current.value !== '' && parseInt(rotate.current.value) > 0) {
+            body.rotateAngle = parseInt(rotate.current.value);
+        }
+
         const response = await fetch('/api/convert', {
             method: "POST",
             headers: {

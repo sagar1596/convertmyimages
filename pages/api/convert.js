@@ -20,7 +20,8 @@ const post = async (req, res) => {
     fixedSize = req.body.fixedSize || {},
     scaleInfo = req.body.scaleInfo || {},
     quality = parseInt(req.body.quality) || 100,
-    flip = req.body.flip || {};
+    flip = req.body.flip || {},
+    rotateAngle = req.body.rotateAngle || 0;
 
     // Read the image
     let img = await jimp.read(Buffer.from(file.split("base64,")[1], 'base64'));
@@ -40,6 +41,10 @@ const post = async (req, res) => {
 
     if(flip.hasOwnProperty("horizontal") || flip.hasOwnProperty("vertical") ) {
       img = await img.flip(flip.horizontal, flip.vertical);
+    }
+
+    if(rotateAngle) {
+      img = await img.rotate(rotateAngle);
     }
 
     // Create a buffer based on required format
