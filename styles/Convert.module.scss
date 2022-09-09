@@ -103,7 +103,11 @@
 
 }
 
-.option_container label, .option_container input[type='number'] {
+.option_container label {
+    width: 8rem;
+}
+
+.option_container input[type='number'] {
     width: 6rem;
 }
 
@@ -128,6 +132,7 @@
 
 .container .Collapsible {
     background-color: #7a7a7a;
+    margin-top: 3px;
 }
 
 .container .Collapsible__contentInner {

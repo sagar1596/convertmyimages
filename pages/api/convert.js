@@ -19,7 +19,8 @@ const post = async (req, res) => {
     greyScale = req.body.gs || false,
     fixedSize = req.body.fixedSize || {},
     scaleInfo = req.body.scaleInfo || {},
-    quality = parseInt(req.body.quality) || 100;
+    quality = parseInt(req.body.quality) || 100,
+    flip = req.body.flip || {};
 
     // Read the image
     let img = await jimp.read(Buffer.from(file.split("base64,")[1], 'base64'));
@@ -35,6 +36,10 @@ const post = async (req, res) => {
       img = await img.scaleToFit(scaleInfo.width || jimp.AUTO, scaleInfo.height || jimp.AUTO);
     } else if(scaleInfo.scaleFactor) {
       img = await img.scale( scaleInfo.scaleFactor );
+    }
+
+    if(flip.hasOwnProperty("horizontal") || flip.hasOwnProperty("vertical") ) {
+      img = await img.flip(flip.horizontal, flip.vertical);
     }
 
     // Create a buffer based on required format

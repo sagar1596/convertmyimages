@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from 'react';
-import '../styles/Convert.module.css';
 import HeaderComponent from '../components/header';
 import FooterComponent from '../components/footer';
 import SeoComponent from '../components/seo';
@@ -24,6 +23,9 @@ const Home = () => {
     scaleFactor = useRef(),
     scaleWidth = useRef(),
     scaleHeight = useRef(),
+    flip_h = useRef(),
+    flip_v = useRef(),
+    rotate = useRef(),
     [uIFormat, setUIFormat] = useState(""),
     [convertedFile, setConvertedFile] = useState({}),
     [files, setFiles] = useState([]),
@@ -92,7 +94,7 @@ const Home = () => {
         }
 
         const scaleInfo = {};
-        if(scaleFactor) {
+        if(scaleFactor && scaleFactor.current.value !== '' && parseInt(scaleFactor.current.value) > 0) {
             scaleInfo.scaleFactor = parseInt(scaleFactor.current.value);
         }
         if(scaleWidth && scaleWidth.current.value !== '' && parseInt(scaleWidth.current.value) > 0) {
@@ -104,6 +106,13 @@ const Home = () => {
 
         if(scaleInfo) {
             body.scaleInfo = scaleInfo;
+        }
+
+        const flip = {};
+        flip.horizontal = flip_h.current.checked;
+        flip.vertical = flip_v.current.checked;
+        if(flip && (flip.hasOwnProperty('horizontal') || flip.hasOwnProperty('vertical'))) {
+            body.flip = flip;
         }
 
         const response = await fetch('/api/convert', {
@@ -171,7 +180,7 @@ const Home = () => {
             </div>
 
 
-            <Collapsible trigger="Advanced Options">
+            <Collapsible trigger="Resize or Crop">
                     <div className='additional_settings'>
                         <div className='option_container'>
                             <label htmlFor='quality'>Quality</label>
@@ -201,22 +210,39 @@ const Home = () => {
                     </div>
             </Collapsible>
 
+            <Collapsible trigger="Flip or Rotate">
+                <div className='additional_settings'>
+                    <div className='option_container'>
+                        <label htmlFor='flip_h'>Flip Horizontal</label>
+                        <input title='Flip Horizontal' placeholder='Flip Horizontal' type='checkbox' value="false" name="flip_h" ref={flip_h} />
+                    </div>
+                    <div className='option_container'>
+                        <label htmlFor='flip_v'>Flip Vertical</label>
+                        <input title='Flip Vertical' placeholder='Flip Vertical' type='checkbox' value="false" name="flip_v" ref={flip_v} />
+                    </div>
+                    <div className='option_container'>
+                        <label htmlFor='rotate'>Rotate Angle</label>
+                        <input title='Rotate Angle' placeholder='deg' type='number' min="0" max="360" step="1" name="rotate" ref={rotate} />
+                    </div>
+                </div>
+            </Collapsible>
+
             <div className='btns_container'>
                 <button className='convert_btn' 
                     data-format="image/png" 
                     data-disabled={files.length > 0 ? '' : 'disabled'}
                     onClick={() => _handleConvert("image/png")} 
-                    data-hidden={uIFormat === 'image/png' ? 'hidden' : ''}>Convert To PNG</button>
+                    >{uIFormat === 'image/png' ? 'Save PNG' : 'Convert To PNG'}</button>
                 <button className='convert_btn' 
                     data-format="image/jpeg" 
                     data-disabled={files.length > 0 ? '' : 'disabled'}
                     onClick={() => _handleConvert("image/jpeg")} 
-                    data-hidden={(uIFormat === 'image/jpg' || uIFormat === 'image/jpeg') ? 'hidden' : ''}>Convert To JPEG</button>
+                    >{uIFormat === 'image/jpeg' ? 'Save JPEG' : 'Convert To JPEG'}</button>
                 <button className='convert_btn' 
                     data-format="image/bmp" 
                     data-disabled={files.length > 0 ? '' : 'disabled'}
                     onClick={() => _handleConvert("image/bmp")} 
-                    data-hidden={uIFormat === 'image/bmp' ? 'hidden' : ''}>Convert To BMP</button>
+                    >{uIFormat === 'image/bmp' ? 'Save BMP' : 'Convert To BMP'}</button>
             </div>
 
             <div className='downloadFile hidden' ref= { downloadSection }>
