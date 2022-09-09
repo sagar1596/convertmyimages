@@ -129,7 +129,6 @@ const Home = () => {
         });
 
         const data = await response.json();
-        console.log("data", data);
         const blob = b64toBlob(data.b64Data, data.contentType);
 
         const [ fileName ] = file.name.split('.');
