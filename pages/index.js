@@ -249,13 +249,13 @@ const Home = () => {
                     >{uIFormat === 'image/bmp' ? 'Save BMP' : 'Convert To BMP'}</button>
             </div>
 
-            <div className='downloadFile hidden' ref= { downloadSection }>
-                <div className='old'>
+            <div className='downloadFile hidden row mx-1' ref= { downloadSection }>
+                <div className='old col-12 col-md-6'>
                     <span className='title'>Old</span>
                     <span className="size" ref={ old_size }></span>
                     <span className="type" ref={ old_type }></span>
                 </div>
-                <div className='new'>
+                <div className='new col-12 col-md-6'>
                     <span className='title'>New</span>
                     <span className="size" ref={ new_size }></span>
                     <span className="type" ref={ new_type }></span>
