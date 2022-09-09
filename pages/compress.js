@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../styles/Convert.module.css';
+import styles from '../styles/Convert.module.scss';
 import HeaderComponent from '../components/header';
 import FooterComponent from '../components/footer';
 import SeoComponent from '../components/seo';
