@@ -299,12 +299,12 @@ Home.getLayout = (page) => {
   return (
       <>
         <SeoComponent
-            title="Convert My Images : Compress"
-            description="This is a site used to compress images to required size."
-            canonical="http://www.convertmyimages.com/compress"
+            title="Convert My Images"
+            description="This is a site used to resize, crop and rotate images to required sizes and formats."
+            canonical="http://www.convertmyimages.com"
             ourl= 'http://www.convertmyimages.com'
             otitle= 'Convert my images'
-            odescription= 'This is a site used to compress images to required size.'
+            odescription= 'This is a site used to resize, crop and rotate images to required sizes and formats.'
             osite_name= 'ConvertMyImages'
             thandle= '@sagar1596'
             tsite= 'www.sagarbhat.com'
