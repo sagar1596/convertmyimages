@@ -3,8 +3,10 @@
     width: 40%;
     margin: 3rem auto auto auto;
 
-    .fileName_constainer[data-hidden="hidden"] {
-        visibility: hidden;
+    .fileName_constainer {
+        &[data-hidden="hidden"] {
+            visibility: hidden;
+        }
 
         .fileName {
             font-size: .7rem;
@@ -30,6 +32,17 @@
             flex-direction: column;
             border: 1px dashed;
             padding: 1rem;
+            font-size: .7rem;
+
+            .header_download {
+                border-bottom: 1px dashed;
+                width: 100%;
+                display: block;
+                margin-bottom: 0.5rem;
+                padding-bottom: 0.5rem;
+                font-size: 1rem;
+                font-weight: 700;
+            }
 
             .type {
                 padding-bottom: 0.5rem;
@@ -40,6 +53,14 @@
             > div {
                 position: relative;
 
+                &:last-child {
+                    > span {
+                        border-bottom: 0;
+                        margin-bottom: 0;
+                        padding-bottom: 0;
+                    }
+                }
+
                 > span {
                     display: block;
 
@@ -49,7 +70,7 @@
                         width: 20px;
                         position: absolute;
                         right: 0;
-                        top: 0;
+                        top: 5px;
                         background-repeat: round;
                         cursor: pointer;
                     }
@@ -60,6 +81,9 @@
 
     .download_btn {
         margin-top: 1rem;
+        cursor: pointer;
+        background-color: #e8c647;
+        color: #000000;
     }
 
     .label_style {

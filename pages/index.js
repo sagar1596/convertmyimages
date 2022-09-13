@@ -263,6 +263,7 @@ const Home = () => {
 
             <div className='downloadFile hidden row mx-1' ref= { downloadSection }>
             <div className='old col-12 col-md-6'>
+                <span className='header_download'>Old</span>
                 {
                     files.map((file, idx) => (
                         <div key={idx}>
@@ -274,6 +275,7 @@ const Home = () => {
                 }
             </div>
             <div className='new col-12 col-md-6'>
+                <span className='header_download'>New</span>
             {
                 convertedFiles.map((file, idx) => (
                     <div key={idx}>
