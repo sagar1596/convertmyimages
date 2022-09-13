@@ -2,199 +2,173 @@
     padding: 2rem;
     width: 40%;
     margin: 3rem auto auto auto;
+
+    .fileName_constainer[data-hidden="hidden"] {
+        visibility: hidden;
+
+        .fileName {
+            font-size: .7rem;
+        }
+
+        .delete_btn {
+            background-image: url('../public/remove.png');
+            width: 20px;
+            height: 20px;
+            float: right;
+            background-repeat: round;
+            margin-top: 3px;
+            cursor: pointer;
+        }
+    }
+
+    .downloadFile {
+        display: flex;
+        flex-direction: row;
+        margin: 2rem 0;
+
+        .old, .new {
+            flex-direction: column;
+            border: 1px dashed;
+            padding: 1rem;
+
+            .type {
+                padding-bottom: 0.5rem;
+                margin-bottom: 0.5rem;
+                border-bottom: 1px dashed;
+            }
+
+            > div {
+                position: relative;
+
+                > span {
+                    display: block;
+
+                    &.ind_download_btn {
+                        background-image: url('../public/download.png');
+                        height: 20px;
+                        width: 20px;
+                        position: absolute;
+                        right: 0;
+                        top: 0;
+                        background-repeat: round;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+    }
+
+    .download_btn {
+        margin-top: 1rem;
+    }
+
+    .label_style {
+        display: flex;
+        width: 100%;
+        height: 10rem;
+        border: 1px solid #000;
+        background-color: #7a7a7a;
+        cursor: pointer;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .label_style:hover {
+        background-color: #bdbdbd;
+    }
+
+    .upload_style {
+        display: none;
+    }
+
+    .btns_container {
+        display: flex;
+
+        .convert_btn {
+            display: block;
+            margin: 2rem auto;
+            background-color: #e8c647;
+            color: #000000;
+            width: 12rem;
+            height: 3rem;
+            cursor: pointer;
+
+            &[data-disabled="disabled"] {
+                background-color: gray;
+                border: none;
+                pointer-events: none;
+            }
+
+            &[data-hidden="hidden"] {
+                display: none;
+            }
+        }
+    }
+
+    .Collapsible {
+        background-color: #7a7a7a;
+        margin-top: 3px;
+
+        .Collapsible__trigger {
+            display: block;
+            font-weight: 400;
+            text-decoration: none;
+            position: relative;
+            padding: 10px;
+            background: #b1afaf;
+            color: #000;
+
+            &:after {
+                content: '\21E3';
+                position: absolute;
+                right: 10px;
+                top: 7px;
+                display: block;
+                transition: transform 300ms;
+                font-size: 1.2rem;
+            }
+
+            &.is-open:after {
+                transform: rotateZ(180deg);
+            }
+
+            &.is-disabled {
+                opacity: 0.5;
+                background-color: grey;
+            }
+        }
+
+        .Collapsible__contentInner {
+            padding: 10px;
+            border: 1px solid #fff;
+            border-top: 0;
+
+            p {
+                margin-bottom: 10px;
+                font-size: 14px;
+                line-height: 20px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+
+            .additional_settings {
+                .option_container {
+                    label {
+                        width: 8rem;
+                    }
+
+                    input[type='number'] {
+                        width: 6rem;
+                    }
+
+                    .scaleSizeContainer {
+                        display: block;
+                    }
+                }
+            }
+        }
+    }
 }
 
-.downloadFile {
-    display: flex;
-    flex-direction: row;
-    margin: 2rem 0;
-}
-
-.old, .new {
-    display: flex;
-    flex-direction: column;
-    border: 1px dashed;
-    padding: 1rem;
-    width: 20rem;
-}
-
-.title {
-    border-bottom: 1px dashed;
-    padding-bottom: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.download_btn {
-    margin-top: 1rem;
-}
-
-.instruction {
-    display: block;
-    margin: 2rem 0;
-}
-
-/* New */
-.label_style {
-    display: flex;
-    width: 100%;
-    height: 10rem;
-    border: 1px solid #000;
-    background-color: #7a7a7a;
-    cursor: pointer;
-    justify-content: center;
-    align-items: center;
-}
-
-.label_style:hover {
-    background-color: #bdbdbd;
-}
-
-.upload_style {
-    display: none;
-}
-
-.fileName {
-    font-size: .7rem;
-}
-
-.btns_container {
-    display: flex;
-}
-
-.convert_btn {
-    display: block;
-    margin: 2rem auto;
-    background-color: #e8c647;
-    color: #000000;
-    width: 12rem;
-    height: 3rem;
-    cursor: pointer;
-}
-
-.convert_btn[data-disabled="disabled"] {
-    background-color: gray;
-    border: none;
-    pointer-events: none;
-}
-
-.convert_btn[data-hidden="hidden"] {
-    display: none;
-}
-
-.fileName_constainer[data-hidden="hidden"] {
-    visibility: hidden;
-}
-
-.delete_btn {
-    background-image: url('../public/remove.png');
-    width: 20px;
-    height: 20px;
-    float: right;
-    background-repeat: round;
-    margin-top: 3px;
-    cursor: pointer;
-}
-
-.additional_settings {
-
-}
-
-.option_container {
-
-}
-
-.option_container label {
-    width: 8rem;
-}
-
-.option_container input[type='number'] {
-    width: 6rem;
-}
-
-.scaleSizeContainer {
-    display: block;
-}
-
-.collapsed, .expanded {
-    position: relative;
-}
-
-.collapsed .toggleIcon, .expanded .toggleIcon {
-    position: absolute;
-    right: 0;
-    line-height: 1.8rem;
-}
-
-.collapsed .toggleIcon {
-    rotate: 180deg;
-    line-height: 1.1;
-}
-
-.container .Collapsible {
-    background-color: #7a7a7a;
-    margin-top: 3px;
-}
-
-.container .Collapsible__contentInner {
-    padding: 10px;
-    border: 1px solid #fff;
-    border-top: 0;
-}
-
-.container .Collapsible__contentInner p {
-    margin-bottom: 10px;
-    font-size: 14px;
-    line-height: 20px;
-}
-
-.container .Collapsible__contentInner p:last-child {
-    margin-bottom: 0;
-}
-
-.container .Collapsible__trigger {
-    display: block;
-    font-weight: 400;
-    text-decoration: none;
-    position: relative;
-    padding: 10px;
-    background: #b1afaf;
-    color: #000;
-}
-
-.container .Collapsible__trigger:after {
-    content: '\21E3';
-    position: absolute;
-    right: 10px;
-    top: 7px;
-    display: block;
-    transition: transform 300ms;
-    font-size: 1.2rem;
-}
-
-.container .Collapsible__trigger.is-open:after {
-    transform: rotateZ(180deg);
-}
-
-.container .Collapsible__trigger.is-disabled {
-opacity: 0.5;
-background-color: grey;
-}
-
-
-/* New */
-
-.compress_type_container {
-    margin-top: 1rem;
-}
-
-.input_radio {
-    margin: 0 5px 0 0;
-}
-
-.radio_label {
-    margin-right: 2rem;
-}
-
-.input_text {
-    width: 4rem;
-}

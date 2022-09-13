@@ -4,15 +4,15 @@ import FooterComponent from '../components/footer';
 import SeoComponent from '../components/seo';
 import b64toBlob from 'b64-to-blob';
 import fileDownload from 'js-file-download';
+import JsZip from 'jszip';
+import FileSaver from 'file-saver';
 // import SquareadComponent from '../components/squareAd';
 import FileBase64 from '../helpers/react-file-base64';
 
 import Collapsible from 'react-collapsible';
 
 const Home = () => {
-    const old_size = useRef(),
-    old_type = useRef(),
-    new_size = useRef(),
+    const new_size = useRef(),
     new_type = useRef(),
     fileName = useRef(),
     downloadSection = useRef(),
@@ -27,34 +27,35 @@ const Home = () => {
     flip_v = useRef(),
     rotate = useRef(),
     [uIFormat, setUIFormat] = useState(""),
-    [convertedFile, setConvertedFile] = useState({}),
+    [convertedFiles, setConvertedFiles] = useState([]),
     [files, setFiles] = useState([]),
-    [accordionState, setAccordionState] = useState(false);
+    [accordionState, setAccordionState] = useState(false),
+    JsZipIns = new JsZip() ;
     
     useEffect(() => {
         const setDownloadArea = () => {
-            if(convertedFile && convertedFile.hasOwnProperty('size')) {
-                new_size.current.innerText = `Size: ${bytesToKbs(convertedFile.size)}`;
-                new_type.current.innerText = `Type: ${convertedFile.type}`;
-    
+            if(convertedFiles.length > 0) {
                 downloadSection.current.classList.remove('hidden');
             }
         }
         setDownloadArea();
-    }, [convertedFile]);
+    }, [convertedFiles]);
 
     useEffect(() => {
         if(files.length > 0) {
             const file = files[0];
-            fileName.current.innerText = files[0] ? 
-            `File Name: ${files[0].name}` :
-            '';
+            let fileNames = "";
+            let fileTypeArr = [];
+            files.forEach(file => {
+                fileNames += file ? 
+                `File Name: ${file.name} \n` :
+                '';
+                fileTypeArr.push(file.type);
+            });
+            fileName.current.innerText = fileNames;
         
-            setUIFormat(files[0] ? 
-                files[0].type :
-            'image/png');
-            old_size.current.innerText = `Size: ${bytesToKbs(kbToBytes(file.size.replace(' kB', '')))}`;
-            old_type.current.innerText = `Type: ${file.type}`;
+            const fileType = fileTypeArr.every( (val, i, arr) => val === arr[0] ) ? fileTypeArr[0] : "Mixed";
+            setUIFormat(fileType);
             downloadSection.current.classList.add('hidden');
         }
     }, [files]);
@@ -69,7 +70,7 @@ const Home = () => {
     }
 
     const _handleConvert = async (format) => {
-        const file = files[0];
+        const file = files;
 
         if(!file) {
             alert("File not provided");
@@ -77,7 +78,7 @@ const Home = () => {
         }
 
         const body = {};
-        body.file = file.base64;
+        body.files = files.map(file => ({ base64: file.base64, fileName: file.name}));
 
         body.tf =  format || "image/png";
         body.quality = quality.current.value || 100;
@@ -129,17 +130,21 @@ const Home = () => {
         });
 
         const data = await response.json();
-        const blob = b64toBlob(data.b64Data, data.contentType);
 
-        const [ fileName ] = file.name.split('.');
-        
+        console.log('dsata', data);
 
-        setConvertedFile({
-            blob: blob,
-            name: `${fileName}-converted.${data.extension}`,
-            size: blob.size,
-            type: blob.type
-        });
+
+        setConvertedFiles(data.filesData.map((eachFile, idx) => {
+            const blob = b64toBlob(eachFile.file, data.contentType),
+            [ fileName ] = eachFile.fileName.split('.');
+            return {
+                blob: blob,
+                blobId: idx,
+                name: `${fileName}-converted.${data.extension}`,
+                size: blob.size,
+                type: blob.type
+            }
+        }));
     }
 
     const bytesToKbs = (bytes) => {
@@ -158,12 +163,20 @@ const Home = () => {
     }
 
 
-    const _handleDownload = () => {
-        fileDownload(convertedFile.blob, convertedFile.name);
+    const _handleDownload = async () => {
+        convertedFiles.forEach(eachFile => {
+            JsZipIns.file(eachFile.name, eachFile.blob);
+        });
+
+        const content = await JsZipIns.generateAsync({type: "blob"});
+        const currDate = new Date().getTime();
+        const fileName = `converted-${currDate}.zip`;
+        await FileSaver.saveAs(content, fileName);
     }
 
-    const _accordionChange = (state) => {
-        setAccordionState(state.length === 0 ? false : true);
+    const _downloadSingle = (currentItem) => {
+        const currentFile = convertedFiles.find(i => i.blobId === currentItem);
+        fileDownload(currentFile.blob, currentFile.name);
     }
 
     return (
@@ -249,18 +262,32 @@ const Home = () => {
             </div>
 
             <div className='downloadFile hidden row mx-1' ref= { downloadSection }>
-                <div className='old col-12 col-md-6'>
-                    <span className='title'>Old</span>
-                    <span className="size" ref={ old_size }></span>
-                    <span className="type" ref={ old_type }></span>
-                </div>
-                <div className='new col-12 col-md-6'>
-                    <span className='title'>New</span>
-                    <span className="size" ref={ new_size }></span>
-                    <span className="type" ref={ new_type }></span>
+            <div className='old col-12 col-md-6'>
+                {
+                    files.map((file, idx) => (
+                        <div key={idx}>
+                            <span className='title'>Name: { file.name }</span>
+                            <span className="size" >Size: {bytesToKbs(kbToBytes(file.size.replace(' kB', '')))}</span>
+                            <span className="type">Type: { file.type }</span>
+                        </div>
+                    ))
+                }
+            </div>
+            <div className='new col-12 col-md-6'>
+            {
+                convertedFiles.map((file, idx) => (
+                    <div key={idx}>
+                        <span className='title'>Name: { file.name }</span>
+                        <span className="size">Size: { bytesToKbs(file.size) }</span>
+                        <span className="type">Type: { file.type } </span>
 
-                    <button type="button" className='download_btn' onClick={_handleDownload} >Download</button>
-                </div>
+                        <span className="ind_download_btn"  onClick={() => _downloadSingle(file.blobId)}></span>
+                    </div>
+                ))
+            }
+            </div>
+            <button type="button" className='download_btn' onClick={_handleDownload} >Download All</button>
+                
             </div>
         </div> 
     )

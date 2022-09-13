@@ -14,7 +14,7 @@ export const config = {
 const post = async (req, res) => {
   try {
 
-    const file = req.body.file,
+    const files = req.body.files,
     targetFormat = req.body.tf || "image/png",
     greyScale = req.body.gs || false,
     fixedSize = req.body.fixedSize || {},
@@ -23,51 +23,53 @@ const post = async (req, res) => {
     flip = req.body.flip || {},
     rotateAngle = req.body.rotateAngle || 0;
 
-    // Read the image
-    let img = await jimp.read(Buffer.from(file.split("base64,")[1], 'base64'));
-    img = await img.quality(quality);
-    if(greyScale) {
-      img = await img.greyscale();
-    }
-    if(fixedSize.hasOwnProperty('width') || fixedSize.hasOwnProperty('height')) {
-      img = await img.resize( fixedSize.width || jimp.AUTO, fixedSize.height || jimp.AUTO )
-    }
+    const returnData = await Promise.all(files.map(async file => {
+      // Read the image
+      let img = await jimp.read(Buffer.from(file.base64.split("base64,")[1], 'base64'));
+      img = await img.quality(quality);
+      if(greyScale) {
+        img = await img.greyscale();
+      }
+      if(fixedSize.hasOwnProperty('width') || fixedSize.hasOwnProperty('height')) {
+        img = await img.resize( fixedSize.width || jimp.AUTO, fixedSize.height || jimp.AUTO )
+      }
 
-    if(scaleInfo.width || scaleInfo.height) {
-      img = await img.scaleToFit(scaleInfo.width || jimp.AUTO, scaleInfo.height || jimp.AUTO);
-    } else if(scaleInfo.scaleFactor) {
-      img = await img.scale( scaleInfo.scaleFactor );
-    }
+      if(scaleInfo.width || scaleInfo.height) {
+        img = await img.scaleToFit(scaleInfo.width || jimp.AUTO, scaleInfo.height || jimp.AUTO);
+      } else if(scaleInfo.scaleFactor) {
+        img = await img.scale( scaleInfo.scaleFactor );
+      }
 
-    if(flip.hasOwnProperty("horizontal") || flip.hasOwnProperty("vertical") ) {
-      img = await img.flip(flip.horizontal, flip.vertical);
-    }
+      if(flip.hasOwnProperty("horizontal") || flip.hasOwnProperty("vertical") ) {
+        img = await img.flip(flip.horizontal, flip.vertical);
+      }
 
-    if(rotateAngle) {
-      img = await img.rotate(rotateAngle);
-    }
+      if(rotateAngle) {
+        img = await img.rotate(rotateAngle);
+      }
 
-    // Create a buffer based on required format
-    let formatMIME = jimp.MIME_PNG;
-    switch(targetFormat) {
-      case "image/png":
-        formatMIME = jimp.MIME_PNG;
-        break;
-      case "image/jpeg":
-      case "image/jpg":
-        formatMIME = jimp.MIME_JPEG;
-        break;
-      case "image/bmp":
-        formatMIME = jimp.MIME_BMP;
-        break;
-    }
+      // Create a buffer based on required format
+      let formatMIME = jimp.MIME_PNG;
+      switch(targetFormat) {
+        case "image/png":
+          formatMIME = jimp.MIME_PNG;
+          break;
+        case "image/jpeg":
+        case "image/jpg":
+          formatMIME = jimp.MIME_JPEG;
+          break;
+        case "image/bmp":
+          formatMIME = jimp.MIME_BMP;
+          break;
+      }
+      const bufferConverted = await img.getBufferAsync(formatMIME);
 
+      return Promise.resolve({ file: bufferConverted.toString('base64'), fileName: file.fileName});
 
-
-    const bufferConverted = await img.getBufferAsync(formatMIME);
-
-    const base64Data = bufferConverted.toString('base64');
-    res.status(202).json({ b64Data: base64Data, contentType: targetFormat, extension:targetFormat.split('/')[1]});
+    })
+    );
+    
+    res.status(202).json({ filesData: returnData, contentType: targetFormat, extension:targetFormat.split('/')[1]});
   } catch(err) {
     console.log(err);
     res.status(404).json({message: err.message}).end();
