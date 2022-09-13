@@ -8,8 +8,8 @@ import JsZip from 'jszip';
 import FileSaver from 'file-saver';
 // import SquareadComponent from '../components/squareAd';
 import FileBase64 from '../helpers/react-file-base64';
-
 import Collapsible from 'react-collapsible';
+import DownloadFileInfo from '../components/downloadFileInfo';
 
 const Home = () => {
     const new_size = useRef(),
@@ -266,11 +266,13 @@ const Home = () => {
                 <span className='header_download'>Old</span>
                 {
                     files.map((file, idx) => (
-                        <div key={idx}>
-                            <span className='title'>Name: { file.name }</span>
-                            <span className="size" >Size: {bytesToKbs(kbToBytes(file.size.replace(' kB', '')))}</span>
-                            <span className="type">Type: { file.type }</span>
-                        </div>
+                        <DownloadFileInfo
+                            key={idx}
+                            file={file}
+                            showDownloadBtn={false}
+                            doubleCheck={true}
+                        />
+                        
                     ))
                 }
             </div>
@@ -278,13 +280,13 @@ const Home = () => {
                 <span className='header_download'>New</span>
             {
                 convertedFiles.map((file, idx) => (
-                    <div key={idx}>
-                        <span className='title'>Name: { file.name }</span>
-                        <span className="size">Size: { bytesToKbs(file.size) }</span>
-                        <span className="type">Type: { file.type } </span>
-
-                        <span className="ind_download_btn"  onClick={() => _downloadSingle(file.blobId)}></span>
-                    </div>
+                    <DownloadFileInfo
+                            key={idx}
+                            file={file}
+                            showDownloadBtn={true}
+                            doubleCheck={false}
+                            downloadSingle={_downloadSingle}
+                        />
                 ))
             }
             </div>
