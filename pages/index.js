@@ -289,8 +289,8 @@ Home.getLayout = (page) => {
         <SeoComponent
             title="Convert My Images"
             description="This is a site used to resize, crop and rotate images to required sizes and formats."
-            canonical="http://www.convertmyimages.com"
-            ourl= 'http://www.convertmyimages.com'
+            canonical="https://www.convertmyimages.com"
+            ourl= 'https://www.convertmyimages.com'
             otitle= 'Convert my images'
             odescription= 'This is a site used to resize, crop and rotate images to required sizes and formats.'
             osite_name= 'ConvertMyImages'
