@@ -1,17 +1,10 @@
 {
-  "rules": {
-    "react/no-unknown-property": [
-      2,
-      {
-        "ignore": [
-          "jsx"
-        ]
-      }
-    ]
-  },
   "extends": [
     "next/core-web-vitals"
-  ]
+  ],
+  "rules": {
+    "react/no-unknown-property": "off"
+  }
 }
 
 
