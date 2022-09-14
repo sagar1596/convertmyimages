@@ -3,6 +3,24 @@
     width: 40%;
     margin: 3rem auto auto auto;
 
+    h1 {
+        font-size: 1.7rem;
+        font-family: serif;
+    }
+    
+    h2 {
+        font-size: 1.1rem;
+        font-family: serif;
+        display: inline-block;
+        border: 1px solid;
+        border-radius: 30px 30px 30px 30px;
+        padding: 0.3rem;
+        margin-right: 0.3rem;
+        cursor: default;
+        background-color: #39485c;
+        color: #ebc745;
+    }
+
     .fileName_constainer {
         &[data-hidden="hidden"] {
             visibility: hidden;

@@ -10,6 +10,7 @@ import FileSaver from 'file-saver';
 import FileBase64 from '../helpers/react-file-base64';
 import Collapsible from 'react-collapsible';
 import DownloadFileInfo from '../components/downloadFileInfo';
+import SupportedOperations from '../components/supportedOperations';
 
 const Home = () => {
     const new_size = useRef(),
@@ -147,22 +148,6 @@ const Home = () => {
         }));
     }
 
-    const bytesToKbs = (bytes) => {
-        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-        if (bytes == 0) return '0 Byte';
-        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
-    }
-
-    function kbToBytes(kilobytes) {
-        var Bytes = 0;
-        // Calculates Bytes
-        // 1 KB = 1024 bytes
-        Bytes = kilobytes * 1024;
-        return Bytes;
-    }
-
-
     const _handleDownload = async () => {
         convertedFiles.forEach(eachFile => {
             JsZipIns.file(eachFile.name, eachFile.blob);
@@ -182,7 +167,7 @@ const Home = () => {
     return (
 
         <div className='container'>
-
+            <SupportedOperations />
             <label className='label_style' htmlFor="imageupload">Choose File To Convert</label>
              <FileBase64
                 id="imageupload"
@@ -197,6 +182,7 @@ const Home = () => {
 
 
             <Collapsible trigger="Resize or Crop">
+
                     <div className='additional_settings'>
                         <div className='option_container'>
                             <label htmlFor='quality'>Quality</label>
