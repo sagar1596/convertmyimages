@@ -6,6 +6,40 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+
+  &.loading {
+
+    .mask{
+      opacity: 0.6;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      position: fixed;
+      background-color: #ffffff;
+      top: 0;
+      left: 0;
+      z-index: 10;
+    }
+
+    .loader_elem {
+      display: block;
+      background-image: url('../public/loading.svg');
+      top: 50%;
+      height: 3.3rem;
+      position: absolute;
+      width: 12rem;
+      background-position: 0px -70px;
+      background-repeat: no-repeat;
+      background-size: cover;
+      left: 50%;
+      transform: translate(-50%);
+      z-index: 10;
+    }
+  }
+  .loader_elem {
+    display: none;
+  }
+  
 }
 
 a {

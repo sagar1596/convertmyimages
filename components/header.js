@@ -16,8 +16,8 @@ const HeaderComponent = () => {
 
     return (
         <header className={styles.header}>
-            <div className={styles.logo}>
-                <Link href="/"><a onClick={() => setActive('1')}><Image src={logo} alt="Logo" layout="fill" /></a></Link>
+            <div itemScope itemType="https://schema.org/Home" className={styles.logo}>
+                <Link href="/"><a itemProp="url" onClick={() => setActive('1')}><Image src={logo} alt="Logo" layout="fill" /></a></Link>
             </div>
             {/* <div ref={linkContainer} className={styles.links}>
                 <Link href="/compress"><a className={active === '1' ? styles.active : styles.basic}  data-id="1" onClick={handleClick}>Compress</a></Link>

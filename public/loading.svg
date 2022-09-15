@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; background: transparant; display: block; shape-rendering: auto;" width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+    <defs>
+      <clipPath id="progress-gy85x3jrqto-cp" x="0" y="0" width="100" height="100">
+        <rect x="0" y="0" width="0" height="100">
+          <animate attributeName="width" repeatCount="indefinite" dur="1s" values="0;100;100" keyTimes="0;0.5;1"></animate>
+          <animate attributeName="x" repeatCount="indefinite" dur="1s" values="0;0;100" keyTimes="0;0.5;1"></animate>
+        </rect>
+      </clipPath>
+    </defs>
+    <path fill="none" stroke="#39485c" stroke-width="3.0500000000000003" d="M12.999999999999998 38.525L87 38.525A11.475 11.475 0 0 1 98.475 50L98.475 50A11.475 11.475 0 0 1 87 61.475L12.999999999999998 61.475A11.475 11.475 0 0 1 1.5249999999999986 50L1.5249999999999986 50A11.475 11.475 0 0 1 12.999999999999998 38.525 Z"></path>
+    <path fill="#ecc944" clip-path="url(#progress-gy85x3jrqto-cp)" d="M12.999999999999998 43.75L87 43.75A6.249999999999999 6.249999999999999 0 0 1 93.25 50L93.25 50A6.249999999999999 6.249999999999999 0 0 1 87 56.25L12.999999999999998 56.25A6.249999999999999 6.249999999999999 0 0 1 6.749999999999999 50L6.749999999999999 50A6.249999999999999 6.249999999999999 0 0 1 12.999999999999998 43.75 Z"></path>
+</svg>

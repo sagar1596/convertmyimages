@@ -13,9 +13,7 @@ import DownloadFileInfo from '../components/downloadFileInfo';
 import SupportedOperations from '../components/supportedOperations';
 
 const Home = () => {
-    const new_size = useRef(),
-    new_type = useRef(),
-    fileName = useRef(),
+    const fileName = useRef(),
     downloadSection = useRef(),
     grey = useRef(),
     width = useRef(),
@@ -30,13 +28,14 @@ const Home = () => {
     [uIFormat, setUIFormat] = useState(""),
     [convertedFiles, setConvertedFiles] = useState([]),
     [files, setFiles] = useState([]),
-    [accordionState, setAccordionState] = useState(false),
     JsZipIns = new JsZip() ;
     
     useEffect(() => {
         const setDownloadArea = () => {
             if(convertedFiles.length > 0) {
                 downloadSection.current.classList.remove('hidden');
+                const bodyElem = document.querySelector('body');
+                bodyElem.classList.remove('loading');
             }
         }
         setDownloadArea();
@@ -71,9 +70,14 @@ const Home = () => {
     }
 
     const _handleConvert = async (format) => {
+
+        const bodyElem = document.querySelector('body');
+
+        bodyElem.classList.add('loading');
         const file = files;
 
         if(!file) {
+            bodyElem.classList.remove('loading');
             alert("File not provided");
             return;
         }
@@ -132,9 +136,6 @@ const Home = () => {
 
         const data = await response.json();
 
-        console.log('dsata', data);
-
-
         setConvertedFiles(data.filesData.map((eachFile, idx) => {
             const blob = b64toBlob(eachFile.file, data.contentType),
             [ fileName ] = eachFile.fileName.split('.');
@@ -183,64 +184,67 @@ const Home = () => {
 
             <Collapsible trigger="Resize or Crop">
 
-                    <div className='additional_settings'>
+                    <div className='additional_settings' itemScope itemType="https://schema.org/Settings">
                         <div className='option_container'>
                             <label htmlFor='quality'>Quality</label>
-                            <input title='Quality' placeholder="1-100" type='number' min='0' max='100' step='1' ref={quality} />
+                            <input itemProp="quality" title='Quality' placeholder="1-100" type='number' min='0' max='100' step='1' ref={quality} />
                         </div>
 
                         <div className='option_container'>
                             <label htmlFor='grey'>Greyscale</label>
-                            <input title='Greyscale' placeholder='Greyscale' type='checkbox' value="false" name="gray" ref={grey} />
+                            <input itemProp="greyscale" title='Greyscale' placeholder='Greyscale' type='checkbox' value="false" name="gray" ref={grey} />
                         </div>
 
                         <div className='option_container'>
                             <label htmlFor='width'>Fixed Size</label>
-                            <input title='Width' placeholder='Width' type='number' name='width' step='1' ref={width} />
-                            <input title='Height' placeholder='Height' type='number' name='height' step='1' ref={height} />
+                            <input itemProp='width' title='Width' placeholder='Width' type='number' name='width' step='1' ref={width} />
+                            <input itemProp='height' title='Height' placeholder='Height' type='number' name='height' step='1' ref={height} />
                         </div>
 
                         <div className='option_container'>
                             <label htmlFor='scale'>Scale</label>
-                            <input title='Scale' placeholder='0-1' name='scale' type='number' min='0' max='1' step='0.1' ref={scaleFactor} />
+                            <input itemProp='scale' title='Scale' placeholder='0-1' name='scale' type='number' min='0' max='1' step='0.1' ref={scaleFactor} />
                             <div className='scaleSizeContainer'>
                                 <label className='scaleSize' htmlFor='scaleWidth'>Scale Size</label>
-                                <input title='Width' placeholder='Width' type='number' name='scaleWidth' step='1' ref={scaleWidth} />
-                                <input title='Height' placeholder='Height' type='number' name='scaleHeight' step='1' ref={scaleHeight} />
+                                <input itemProp='scaleWidth' title='Width' placeholder='Width' type='number' name='scaleWidth' step='1' ref={scaleWidth} />
+                                <input itemProp='scaleHeight' title='Height' placeholder='Height' type='number' name='scaleHeight' step='1' ref={scaleHeight} />
                             </div>
                         </div>
                     </div>
             </Collapsible>
 
-            <Collapsible trigger="Flip or Rotate">
+            <Collapsible trigger="Flip or Rotate" itemScope itemType="https://schema.org/Settings">
                 <div className='additional_settings'>
                     <div className='option_container'>
                         <label htmlFor='flip_h'>Flip Horizontal</label>
-                        <input title='Flip Horizontal' placeholder='Flip Horizontal' type='checkbox' value="false" name="flip_h" ref={flip_h} />
+                        <input itemProp='flipHorizontal' title='Flip Horizontal' placeholder='Flip Horizontal' type='checkbox' value="false" name="flip_h" ref={flip_h} />
                     </div>
                     <div className='option_container'>
                         <label htmlFor='flip_v'>Flip Vertical</label>
-                        <input title='Flip Vertical' placeholder='Flip Vertical' type='checkbox' value="false" name="flip_v" ref={flip_v} />
+                        <input itemProp='flipVertical' title='Flip Vertical' placeholder='Flip Vertical' type='checkbox' value="false" name="flip_v" ref={flip_v} />
                     </div>
                     <div className='option_container'>
                         <label htmlFor='rotate'>Rotate Angle</label>
-                        <input title='Rotate Angle' placeholder='deg' type='number' min="0" max="360" step="1" name="rotate" ref={rotate} />
+                        <input itemProp='rotateAngle' title='Rotate Angle' placeholder='deg' type='number' min="0" max="360" step="1" name="rotate" ref={rotate} />
                     </div>
                 </div>
             </Collapsible>
 
-            <div className='btns_container'>
+            <div className='btns_container' itemScope itemType="https://schema.org/Actions">
                 <button className='convert_btn' 
+                    itemProp='topng'
                     data-format="image/png" 
                     data-disabled={files.length > 0 ? '' : 'disabled'}
                     onClick={() => _handleConvert("image/png")} 
                     >{uIFormat === 'image/png' ? 'Save PNG' : 'Convert To PNG'}</button>
                 <button className='convert_btn' 
+                    itemProp='tojpeg'
                     data-format="image/jpeg" 
                     data-disabled={files.length > 0 ? '' : 'disabled'}
                     onClick={() => _handleConvert("image/jpeg")} 
                     >{uIFormat === 'image/jpeg' ? 'Save JPEG' : 'Convert To JPEG'}</button>
                 <button className='convert_btn' 
+                    itemProp='tobmp'
                     data-format="image/bmp" 
                     data-disabled={files.length > 0 ? '' : 'disabled'}
                     onClick={() => _handleConvert("image/bmp")} 
@@ -277,7 +281,7 @@ const Home = () => {
             }
             </div>
             <button type="button" className='download_btn' onClick={_handleDownload} >Download All</button>
-                
+            
             </div>
         </div> 
     )

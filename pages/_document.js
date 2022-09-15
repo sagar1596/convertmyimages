@@ -10,6 +10,8 @@ export default function Document() {
       <body>
         <Main />
         <NextScript />
+        <div className='mask'></div>
+        <div className='loader_elem'></div>
       </body>
     </Html>
   )
