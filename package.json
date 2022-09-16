@@ -2,13 +2,11 @@
   "name": "convertmyimages",
   "version": "0.1.1",
   "private": true,
-  "main": "server.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "next build"
+    "lint": "next lint"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.6",
