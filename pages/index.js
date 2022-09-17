@@ -305,8 +305,8 @@ const Home = () => {
                             convertedFiles.map((file, idx) => (
                                 <div className='each-base64' key={idx}>
                                     <div className='file-name'>{file.originalFilename}</div>
-                                    <textarea rows="5" readonly="true">
-                                        {file.blob.base64}
+                                    <textarea rows="5" readOnly={true} value={file.blob.base64}>
+                                        
                                     </textarea>
                                 </div>
                             ))
