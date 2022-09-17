@@ -97,6 +97,28 @@
         }
     }
 
+    .base64-section {
+        display: flex;
+        flex-direction: column;
+        margin: 2rem 0;
+        border: 1px dashed;
+        padding: 0.5rem;
+        font-size: .7rem;
+
+        .each-base64 {
+            border-bottom: 1px dashed;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            textarea {
+                resize: none;
+                width: 100%;
+            }
+        }
+    }
+
     .download_btn {
         margin-top: 1rem;
         cursor: pointer;

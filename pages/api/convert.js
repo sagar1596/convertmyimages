@@ -23,6 +23,8 @@ const post = async (req, res) => {
     flip = req.body.flip || {},
     rotateAngle = req.body.rotateAngle || 0;
 
+    
+
     const returnData = await Promise.all(files.map(async file => {
       // Read the image
       let img = await jimp.read(Buffer.from(file.base64.split("base64,")[1], 'base64'));
@@ -48,6 +50,8 @@ const post = async (req, res) => {
         img = await img.rotate(rotateAngle);
       }
 
+
+
       // Create a buffer based on required format
       let formatMIME = jimp.MIME_PNG;
       switch(targetFormat) {
@@ -60,6 +64,9 @@ const post = async (req, res) => {
           break;
         case "image/bmp":
           formatMIME = jimp.MIME_BMP;
+          break;
+        case "image/base64":
+          formatMIME = img._originalMime;
           break;
       }
       const bufferConverted = await img.getBufferAsync(formatMIME);

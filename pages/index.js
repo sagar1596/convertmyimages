@@ -25,6 +25,7 @@ const Home = () => {
     flip_h = useRef(),
     flip_v = useRef(),
     rotate = useRef(),
+    base64Section = useRef(),
     [uIFormat, setUIFormat] = useState(""),
     [convertedFiles, setConvertedFiles] = useState([]),
     [files, setFiles] = useState([]),
@@ -33,9 +34,13 @@ const Home = () => {
     useEffect(() => {
         const setDownloadArea = () => {
             if(convertedFiles.length > 0) {
-                downloadSection.current.classList.remove('hidden');
+                if(convertedFiles[0].type === 'image/base64' && base64Section.current) {
+                    base64Section.current.classList.remove('hidden');
+                } else if(downloadSection.current) {
+                    downloadSection.current.classList.remove('hidden');
+                }
                 const bodyElem = document.querySelector('body');
-                bodyElem.classList.remove('loading');
+                    bodyElem.classList.remove('loading');
             }
         }
         setDownloadArea();
@@ -43,7 +48,6 @@ const Home = () => {
 
     useEffect(() => {
         if(files.length > 0) {
-            const file = files[0];
             let fileNames = "";
             let fileTypeArr = [];
             files.forEach(file => {
@@ -56,7 +60,7 @@ const Home = () => {
         
             const fileType = fileTypeArr.every( (val, i, arr) => val === arr[0] ) ? fileTypeArr[0] : "Mixed";
             setUIFormat(fileType);
-            downloadSection.current.classList.add('hidden');
+            downloadSection.current && downloadSection.current.classList.add('hidden');
         }
     }, [files]);
 
@@ -137,14 +141,16 @@ const Home = () => {
         const data = await response.json();
 
         setConvertedFiles(data.filesData.map((eachFile, idx) => {
-            const blob = b64toBlob(eachFile.file, data.contentType),
+            const blob = format !== 'image/base64' ? b64toBlob(eachFile.file, data.contentType) : { base64: eachFile.file, size: 0, type: "image/base64" },
+            originalFilename = eachFile.fileName,
             [ fileName ] = eachFile.fileName.split('.');
             return {
                 blob: blob,
                 blobId: idx,
                 name: `${fileName}-converted.${data.extension}`,
                 size: blob.size,
-                type: blob.type
+                type: blob.type,
+                originalFilename: originalFilename
             }
         }));
     }
@@ -230,59 +236,85 @@ const Home = () => {
                 </div>
             </Collapsible>
 
-            <div className='btns_container' itemScope itemType="https://schema.org/Actions">
-                <button className='convert_btn' 
+            <div className='btns_container row' itemScope itemType="https://schema.org/Actions">
+                <button className='convert_btn my-3 my-md-5 col-12 col-md-4' 
                     itemProp='topng'
                     data-format="image/png" 
                     data-disabled={files.length > 0 ? '' : 'disabled'}
                     onClick={() => _handleConvert("image/png")} 
                     >{uIFormat === 'image/png' ? 'Save PNG' : 'Convert To PNG'}</button>
-                <button className='convert_btn' 
+                <button className='convert_btn my-3 my-md-5 col-12 col-md-4' 
                     itemProp='tojpeg'
                     data-format="image/jpeg" 
                     data-disabled={files.length > 0 ? '' : 'disabled'}
                     onClick={() => _handleConvert("image/jpeg")} 
                     >{uIFormat === 'image/jpeg' ? 'Save JPEG' : 'Convert To JPEG'}</button>
-                <button className='convert_btn' 
+                <button className='convert_btn my-3 my-md-5 col-12 col-md-4' 
                     itemProp='tobmp'
                     data-format="image/bmp" 
                     data-disabled={files.length > 0 ? '' : 'disabled'}
                     onClick={() => _handleConvert("image/bmp")} 
                     >{uIFormat === 'image/bmp' ? 'Save BMP' : 'Convert To BMP'}</button>
+
+                <button className='convert_btn my-3 my-md-5 col-12 col-md-4' 
+                    itemProp='tobase64'
+                    data-format="image/base64" 
+                    data-disabled={files.length > 0 ? '' : 'disabled'}
+                    onClick={() => _handleConvert("image/base64")} 
+                    >Convert To Base64</button>
             </div>
 
-            <div className='downloadFile hidden row mx-1' ref= { downloadSection }>
-            <div className='old col-12 col-md-6'>
-                <span className='header_download'>Old</span>
-                {
-                    files.map((file, idx) => (
-                        <DownloadFileInfo
-                            key={idx}
-                            file={file}
-                            showDownloadBtn={false}
-                            doubleCheck={true}
-                        />
-                        
-                    ))
-                }
-            </div>
-            <div className='new col-12 col-md-6'>
-                <span className='header_download'>New</span>
             {
-                convertedFiles.map((file, idx) => (
-                    <DownloadFileInfo
-                            key={idx}
-                            file={file}
-                            showDownloadBtn={true}
-                            doubleCheck={false}
-                            downloadSingle={_downloadSingle}
-                        />
-                ))
+                convertedFiles.length > 0 && convertedFiles[0].type !== 'image/base64'
+                ? (
+                    <div className='downloadFile hidden row mx-1' ref= { downloadSection }>
+                        <div className='old col-12 col-md-6'>
+                            <span className='header_download'>Old</span>
+                            {
+                                files.map((file, idx) => (
+                                    <DownloadFileInfo
+                                        key={idx}
+                                        file={file}
+                                        showDownloadBtn={false}
+                                        doubleCheck={true}
+                                    />
+                                    
+                                ))
+                            }
+                        </div>
+                        <div className='new col-12 col-md-6'>
+                            <span className='header_download'>New</span>
+                        {
+                            convertedFiles.map((file, idx) => (
+                                <DownloadFileInfo
+                                        key={idx}
+                                        file={file}
+                                        showDownloadBtn={true}
+                                        doubleCheck={false}
+                                        downloadSingle={_downloadSingle}
+                                    />
+                            ))
+                        }
+                        </div>
+                        <button type="button" className='download_btn' onClick={_handleDownload} >Download All</button>
+                    </div>
+                )
+                : (
+                    <div className='base64-section hidden' ref={ base64Section }>
+                        {
+                            convertedFiles.map((file, idx) => (
+                                <div className='each-base64' key={idx}>
+                                    <div className='file-name'>{file.originalFilename}</div>
+                                    <textarea rows="5" readonly="true">
+                                        {file.blob.base64}
+                                    </textarea>
+                                </div>
+                            ))
+                        }
+                    </div>
+                )
             }
-            </div>
-            <button type="button" className='download_btn' onClick={_handleDownload} >Download All</button>
             
-            </div>
         </div> 
     )
 }
